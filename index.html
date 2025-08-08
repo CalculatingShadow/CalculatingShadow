@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Windows Calculator Clone</title>
-<style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Windows Calculator Clone</title>
+
+  <!-- ✅ Google AdSense Verification Script -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7533964735503056"
+          crossorigin="anonymous"></script>
+
+  <style>
     body {
         font-family: Arial, sans-serif;
         background-color: #1e1e1e;
@@ -58,45 +63,45 @@
     .equal:hover {
         background-color: #0090dd;
     }
-</style>
+  </style>
 </head>
 <body>
-<div class="calculator">
-    <input type="text" id="display" class="display" disabled value="0">
-    <div class="buttons">
-        <button onclick="appendOp('%')">%</button>
-        <button onclick="clearEntry()">CE</button>
-        <button onclick="clearAll()">C</button>
-        <button onclick="backspace()">⌫</button>
+  <div class="calculator">
+      <input type="text" id="display" class="display" disabled value="0">
+      <div class="buttons">
+          <button onclick="appendOp('%')">%</button>
+          <button onclick="clearEntry()">CE</button>
+          <button onclick="clearAll()">C</button>
+          <button onclick="backspace()">⌫</button>
 
-        <button onclick="reciprocal()">1/x</button>
-        <button onclick="square()">x²</button>
-        <button onclick="sqrt()">√x</button>
-        <button onclick="appendOp('/')">÷</button>
+          <button onclick="reciprocal()">1/x</button>
+          <button onclick="square()">x²</button>
+          <button onclick="sqrt()">√x</button>
+          <button onclick="appendOp('/')">÷</button>
 
-        <button onclick="appendNum('7')">7</button>
-        <button onclick="appendNum('8')">8</button>
-        <button onclick="appendNum('9')">9</button>
-        <button onclick="appendOp('*')">×</button>
+          <button onclick="appendNum('7')">7</button>
+          <button onclick="appendNum('8')">8</button>
+          <button onclick="appendNum('9')">9</button>
+          <button onclick="appendOp('*')">×</button>
 
-        <button onclick="appendNum('4')">4</button>
-        <button onclick="appendNum('5')">5</button>
-        <button onclick="appendNum('6')">6</button>
-        <button onclick="appendOp('-')">−</button>
+          <button onclick="appendNum('4')">4</button>
+          <button onclick="appendNum('5')">5</button>
+          <button onclick="appendNum('6')">6</button>
+          <button onclick="appendOp('-')">−</button>
 
-        <button onclick="appendNum('1')">1</button>
-        <button onclick="appendNum('2')">2</button>
-        <button onclick="appendNum('3')">3</button>
-        <button onclick="appendOp('+')">+</button>
+          <button onclick="appendNum('1')">1</button>
+          <button onclick="appendNum('2')">2</button>
+          <button onclick="appendNum('3')">3</button>
+          <button onclick="appendOp('+')">+</button>
 
-        <button onclick="toggleSign()">±</button>
-        <button onclick="appendNum('0')">0</button>
-        <button onclick="appendNum('.')">.</button>
-        <button class="equal" onclick="calculate()">=</button>
-    </div>
-</div>
+          <button onclick="toggleSign()">±</button>
+          <button onclick="appendNum('0')">0</button>
+          <button onclick="appendNum('.')">.</button>
+          <button class="equal" onclick="calculate()">=</button>
+      </div>
+  </div>
 
-<script>
+  <script>
     let display = document.getElementById("display");
     let currentValue = "0";
     let resetNext = false;
@@ -186,6 +191,7 @@
             clearAll();
         }
     });
-</script>
+  </script>
 </body>
 </html>
+
