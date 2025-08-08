@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Windows Calculator Clone</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #1e1e1e;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+    .calculator {
+        background-color: #2d2d2d;
+        padding: 20px;
+        border-radius: 10px;
+        width: 320px;
+    }
+    .display {
+        background-color: transparent;
+        color: white;
+        font-size: 2em;
+        text-align: right;
+        border: none;
+        width: 100%;
+        height: 60px;
+        margin-bottom: 10px;
+    }
+    .buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+    }
+    button {
+        background-color: #3b3b3b;
+        color: white;
+        font-size: 1.2em;
+        padding: 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    button:hover {
+        background-color: #4a4a4a;
+    }
+    .operator {
+        background-color: #444;
+    }
+    .equal {
+        background-color: #00aaff;
+        color: white;
+    }
+    .equal:hover {
+        background-color: #0090dd;
+    }
+</style>
+</head>
+<body>
+<div class="calculator">
+    <input type="text" id="display" class="display" disabled value="0">
+    <div class="buttons">
+        <button onclick="appendOp('%')">%</button>
+        <button onclick="clearEntry()">CE</button>
+        <button onclick="clearAll()">C</button>
+        <button onclick="backspace()">⌫</button>
+
+        <button onclick="reciprocal()">1/x</button>
+        <button onclick="square()">x²</button>
+        <button onclick="sqrt()">√x</button>
+        <button onclick="appendOp('/')">÷</button>
+
+        <button onclick="appendNum('7')">7</button>
+        <button onclick="appendNum('8')">8</button>
+        <button onclick="appendNum('9')">9</button>
+        <button onclick="appendOp('*')">×</button>
+
+        <button onclick="appendNum('4')">4</button>
+        <button onclick="appendNum('5')">5</button>
+        <button onclick="appendNum('6')">6</button>
+        <button onclick="appendOp('-')">−</button>
+
+        <button onclick="appendNum('1')">1</button>
+        <button onclick="appendNum('2')">2</button>
+        <button onclick="appendNum('3')">3</button>
+        <button onclick="appendOp('+')">+</button>
+
+        <button onclick="toggleSign()">±</button>
+        <button onclick="appendNum('0')">0</button>
+        <button onclick="appendNum('.')">.</button>
+        <button class="equal" onclick="calculate()">=</button>
+    </div>
+</div>
+
+<script>
+    let display = document.getElementById("display");
+    let currentValue = "0";
+    let resetNext = false;
+
+    function updateDisplay() {
+        display.value = currentValue;
+    }
+
+    function appendNum(num) {
+        if (resetNext) {
+            currentValue = num;
+            resetNext = false;
+        } else {
+            currentValue = currentValue === "0" ? num : currentValue + num;
+        }
+        updateDisplay();
+    }
+
+    function appendOp(op) {
+        if (!isNaN(currentValue.slice(-1))) {
+            currentValue += op;
+            resetNext = false;
+            updateDisplay();
+        }
+    }
+
+    function clearEntry() {
+        currentValue = "0";
+        updateDisplay();
+    }
+
+    function clearAll() {
+        currentValue = "0";
+        updateDisplay();
+    }
+
+    function backspace() {
+        currentValue = currentValue.length > 1 ? currentValue.slice(0, -1) : "0";
+        updateDisplay();
+    }
+
+    function reciprocal() {
+        currentValue = (1 / parseFloat(currentValue)).toString();
+        updateDisplay();
+    }
+
+    function square() {
+        currentValue = Math.pow(parseFloat(currentValue), 2).toString();
+        updateDisplay();
+    }
+
+    function sqrt() {
+        currentValue = Math.sqrt(parseFloat(currentValue)).toString();
+        updateDisplay();
+    }
+
+    function toggleSign() {
+        currentValue = (parseFloat(currentValue) * -1).toString();
+        updateDisplay();
+    }
+
+    function calculate() {
+        try {
+            currentValue = eval(currentValue.replace(/÷/g, "/").replace(/×/g, "*")).toString();
+        } catch {
+            currentValue = "Error";
+        }
+        updateDisplay();
+        resetNext = true;
+    }
+
+    // Keyboard support
+    document.addEventListener("keydown", function(e) {
+        if (!isNaN(e.key)) {
+            appendNum(e.key);
+        } else if (["+", "-", "*", "/", "%"].includes(e.key)) {
+            appendOp(e.key);
+        } else if (e.key === ".") {
+            appendNum(".");
+        } else if (e.key === "Enter" || e.key === "=") {
+            calculate();
+        } else if (e.key === "Backspace") {
+            backspace();
+        } else if (e.key.toLowerCase() === "c" && e.ctrlKey === false) {
+            clearAll();
+        } else if (e.key === "Escape") {
+            clearAll();
+        }
+    });
+</script>
+</body>
+</html>
