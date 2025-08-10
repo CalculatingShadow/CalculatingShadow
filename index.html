@@ -1,196 +1,509 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Windows Calculator Clone</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <!-- ✅ Google AdSense (optional) -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7533964735503056"
-          crossorigin="anonymous"></script>
+<!-- ✅ Google AdSense (optional) -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7533964735503056"
+        crossorigin="anonymous"></script>
 
-  <style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #1e1e1e;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
+<title>Calculator + Position Sizer</title>
+
+
+
+<style>
+  /* ===== Theme tokens (Dark defaults) ===== */
+  :root{
+    --bg:#0b0d12; --panel:#12151c; --text:#e9eef6; --muted:#8e96a3;
+    --border:#1f2430; --soft:rgba(127,151,255,.12);
+    --ring:#7aa2ff; --ringSoft:rgba(122,162,255,.35); --accent:#2a6cff;
+    --radius:14px; --font:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  }
+
+  /* Auto (system) – when NO data-theme is set */
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#f4f6fb; --panel:#ffffff; --text:#0f172a; --muted:#64748b;
+      --border:#e7eaf0; --soft:rgba(31,76,240,.08);
+      --ring:#325ef6; --ringSoft:rgba(50,94,246,.35); --accent:#1f4cf0;
     }
-    .calculator {
-        background-color: #2d2d2d;
-        padding: 20px;
-        border-radius: 10px;
-        width: 320px;
-    }
-    .display {
-        background-color: transparent;
-        color: white;
-        font-size: 2em;
-        text-align: right;
-        border: none;
-        width: 100%;
-        height: 60px;
-        margin-bottom: 10px;
-    }
-    .buttons {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 8px;
-    }
-    button {
-        background-color: #3b3b3b;
-        color: white;
-        font-size: 1.2em;
-        padding: 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background 0.2s;
-    }
-    button:hover {
-        background-color: #4a4a4a;
-    }
-    .operator {
-        background-color: #444;
-    }
-    .equal {
-        background-color: #00aaff;
-        color: white;
-    }
-    .equal:hover {
-        background-color: #0090dd;
-    }
-  </style>
+  }
+
+  /* Manual overrides (these were missing the variables before) */
+  html[data-theme="light"]{
+    color-scheme: light;
+    --bg:#f4f6fb; --panel:#ffffff; --text:#0f172a; --muted:#64748b;
+    --border:#e7eaf0; --soft:rgba(31,76,240,.08);
+    --ring:#325ef6; --ringSoft:rgba(50,94,246,.35); --accent:#1f4cf0;
+  }
+  html[data-theme="dark"]{
+    color-scheme: dark;
+    --bg:#0b0d12; --panel:#12151c; --text:#e9eef6; --muted:#8e96a3;
+    --border:#1f2430; --soft:rgba(127,151,255,.12);
+    --ring:#7aa2ff; --ringSoft:rgba(122,162,255,.35); --accent:#2a6cff;
+  }
+
+  /* ===== Page ===== */
+  body{
+    margin:0; font-family:var(--font); color:var(--text);
+    background:
+      radial-gradient(1000px 600px at 10% -10%, var(--soft), transparent),
+      radial-gradient(800px 500px at 100% 0%, var(--soft), transparent),
+      var(--bg);
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  /* Top-right global switch */
+  .mode-switch{
+    position: fixed; top:12px; right:12px; z-index:10000;
+    appearance:none; border:1px solid var(--border);
+    background:var(--accent); color:#fff; font-weight:700;
+    padding:10px 14px; border-radius:12px; cursor:pointer;
+    box-shadow:0 10px 20px color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+  .mode-switch:focus{ outline:3px solid var(--ringSoft); outline-offset:2px; }
+
+  /* ===== Calculator (match your look) ===== */
+  .calculator{
+    background:#212427;
+    padding:24px;
+    border-radius:16px;
+    width:420px;
+    box-shadow:0 25px 60px rgba(0,0,0,.35);
+  }
+  .display{
+    width:100%; height:80px; border:none; background:transparent; color:#fff;
+    text-align:right; font-size:48px; line-height:80px;
+    padding:0 28px 0 20px;
+    margin:0 0 14px 0;
+  }
+  .keys{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  .key{
+    background:#2b2f33; border:none; border-radius:10px; color:#e7e7e7;
+    font-size:20px; height:64px; cursor:pointer;
+    transition:transform .03s, background .15s;
+  }
+  .key:hover{ background:#34393e; }
+  .key:active{ transform:translateY(1px); }
+  .key.equal{ background:#1296db; color:#fff; }
+  .key.equal:hover{ background:#0f86c4; }
+
+  /* ===== Sizer container ===== */
+  #sizerMode{ display:none; width:100%; }
+  .wrap{ max-width:1080px; margin:48px auto; padding:0 20px; width:100%; }
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:calc(var(--radius) + 2px);
+    overflow:visible;
+    box-shadow:0 20px 50px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.03);
+  }
+  header{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:18px 22px; border-bottom:1px solid var(--border);
+    backdrop-filter:blur(6px);
+  }
+  header .left{ display:flex; align-items:center; gap:10px; }
+  header h1{ margin:0; font-size:18px; font-weight:700; letter-spacing:.2px; }
+  header .badge{ font-size:12px; padding:6px 10px; border-radius:999px; background:var(--soft); border:1px solid var(--border); }
+  .theme-btn{
+    appearance:none; border:1px solid var(--border); background:transparent;
+    color:var(--text); font-weight:700; padding:10px 12px; border-radius:12px; cursor:pointer;
+    display:flex; align-items:center; gap:8px;
+  }
+  .theme-btn:focus{ outline:3px solid var(--ringSoft); outline-offset:2px; }
+
+  /* ===== No overlapping, consistent control size ===== */
+  .grid{
+    display:grid; grid-template-columns:repeat(12,1fr);
+    gap:28px; padding:18px;
+  }
+  .grid > *{ min-width:0; }
+  .col-3{ grid-column:span 3; } .col-4{ grid-column:span 4; } .col-6{ grid-column:span 6; } .col-8{ grid-column:span 8; } .col-12{ grid-column:span 12; }
+  @media (max-width:980px){ .col-3,.col-4,.col-6,.col-8{ grid-column:span 12; } }
+
+  label{ display:block; font-size:12px; color:var(--muted); margin:0 0 8px; }
+
+  input, select{
+    box-sizing:border-box; width:100%; padding:12px 14px; border-radius:12px;
+    background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.02));
+    border:1px solid var(--border); color:var(--text); font:inherit;
+    min-height:50px; margin:0 0 10px; outline:none;
+  }
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+  input[type=number]{ -moz-appearance:textfield; }
+
+  input:focus, select:focus{
+    border-color:var(--ring);
+    outline:3px solid var(--ringSoft);
+    outline-offset:2px;
+    box-shadow:none;
+  }
+
+  input[readonly]{ opacity:.9; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(0,0,0,.04)); }
+
+  select option{ color:#000; }
+  html[data-theme="dark"] select option{ color:#e9eef6; background:#0f1220; }
+
+  .hint{ font-size:11px; color:var(--muted); margin-top:4px; }
+
+  .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .btn{
+    appearance:none; border:1px solid var(--border); background:var(--accent);
+    color:#fff; font-weight:700; padding:12px 16px; border-radius:12px; cursor:pointer;
+    box-shadow:0 10px 20px color-mix(in srgb, var(--accent) 35%, transparent);
+    transition:transform .05s, box-shadow .2s;
+  }
+  .btn:hover{ transform:translateY(-1px); }
+  .btn.secondary{ background:transparent; color:var(--text); border:1px solid var(--border); box-shadow:none; }
+
+  .out{ background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.02)); border-top:1px solid var(--border); }
+  .stat{ background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.02)); border:1px solid var(--border); border-radius:14px; padding:16px; }
+  .stat h3{ margin:0 0 6px; font-size:12px; color:var(--muted); font-weight:600; letter-spacing:.2px; }
+  .stat p{ margin:0; font-size:22px; font-weight:800; letter-spacing:.3px; }
+  .pill{ font-size:12px; padding:6px 10px; border-radius:999px; background: var(--soft); border:1px solid var(--border); color: var(--text); }
+  footer{ padding:16px 20px; font-size:12px; color:var(--muted); border-top:1px solid var(--border); }
+</style>
 </head>
 <body>
-  <div class="calculator">
-      <input type="text" id="display" class="display" disabled value="0">
-      <div class="buttons">
-          <button onclick="appendOp('%')">%</button>
-          <button onclick="clearEntry()">CE</button>
-          <button onclick="clearAll()">C</button>
-          <button onclick="backspace()">⌫</button>
 
-          <button onclick="reciprocal()">1/x</button>
-          <button onclick="square()">x²</button>
-          <button onclick="sqrt()">√x</button>
-          <button onclick="appendOp('/')">÷</button>
+<button class="mode-switch" id="modeSwitchBtn">Position Sizer</button>
 
-          <button onclick="appendNum('7')">7</button>
-          <button onclick="appendNum('8')">8</button>
-          <button onclick="appendNum('9')">9</button>
-          <button onclick="appendOp('*')">×</button>
+<!-- ===== Calculator ===== -->
+<div class="calculator" id="calcMode">
+  <input type="text" id="display" class="display" disabled value="0">
+  <div class="keys">
+    <button class="key" onclick="appendOp('%')">%</button>
+    <button class="key" onclick="clearEntry()">CE</button>
+    <button class="key" onclick="clearAll()">C</button>
+    <button class="key" onclick="backspace()">⌫</button>
 
-          <button onclick="appendNum('4')">4</button>
-          <button onclick="appendNum('5')">5</button>
-          <button onclick="appendNum('6')">6</button>
-          <button onclick="appendOp('-')">−</button>
+    <button class="key" onclick="reciprocal()">1/x</button>
+    <button class="key" onclick="square()">x²</button>
+    <button class="key" onclick="sqrt()">√x</button>
+    <button class="key" onclick="appendOp('/')">÷</button>
 
-          <button onclick="appendNum('1')">1</button>
-          <button onclick="appendNum('2')">2</button>
-          <button onclick="appendNum('3')">3</button>
-          <button onclick="appendOp('+')">+</button>
+    <button class="key" onclick="appendNum('7')">7</button>
+    <button class="key" onclick="appendNum('8')">8</button>
+    <button class="key" onclick="appendNum('9')">9</button>
+    <button class="key" onclick="appendOp('*')">×</button>
 
-          <button onclick="toggleSign()">±</button>
-          <button onclick="appendNum('0')">0</button>
-          <button onclick="appendNum('.')">.</button>
-          <button class="equal" onclick="calculate()">=</button>
-      </div>
+    <button class="key" onclick="appendNum('4')">4</button>
+    <button class="key" onclick="appendNum('5')">5</button>
+    <button class="key" onclick="appendNum('6')">6</button>
+    <button class="key" onclick="appendOp('-')">−</button>
+
+    <button class="key" onclick="appendNum('1')">1</button>
+    <button class="key" onclick="appendNum('2')">2</button>
+    <button class="key" onclick="appendNum('3')">3</button>
+    <button class="key" onclick="appendOp('+')">+</button>
+
+    <button class="key" onclick="toggleSign()">±</button>
+    <button class="key" onclick="appendNum('0')">0</button>
+    <button class="key" onclick="appendNum('.')">.</button>
+    <button class="key equal" onclick="calculate()">=</button>
   </div>
+</div>
 
-  <script>
-    let display = document.getElementById("display");
-    let currentValue = "0";
-    let resetNext = false;
+<!-- ===== Position Sizer ===== -->
+<div id="sizerMode" aria-hidden="true">
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div class="left">
+          <h1>Position Sizer</h1>
+          <span class="badge">FX + Commodities</span>
+        </div>
+        <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">
+          <span class="theme-emoji" id="themeIcon">⌁</span>
+          <span id="themeLabel">Auto</span>
+        </button>
+      </header>
 
-    function updateDisplay() {
-        display.value = currentValue;
+      <div class="grid">
+        <div class="col-4">
+          <label>Account currency (C)</label>
+          <select id="acctCcy"></select>
+        </div>
+        <div class="col-4">
+          <label>Account balance</label>
+          <input id="balance" type="number" step="0.01" value="10000" />
+        </div>
+        <div class="col-4">
+          <label>Lot step</label>
+          <input id="lotStep" type="number" step="0.001" value="0.01" />
+          <div class="hint">0.01 (micro), 0.1 (mini), 1.0 (standard)</div>
+        </div>
+
+        <div class="col-4">
+          <label>Risk mode</label>
+          <select id="riskMode">
+            <option value="percent" selected>Percent of balance</option>
+            <option value="amount">Fixed amount</option>
+          </select>
+        </div>
+        <div class="col-4">
+          <label id="riskLabel">Risk %</label>
+          <input id="riskVal" type="number" step="0.01" value="1" />
+          <div class="hint" id="riskHint">Example: 1 = risk 1% of balance</div>
+        </div>
+        <div class="col-4">
+          <label>Pair / Instrument</label>
+          <select id="pair"></select>
+        </div>
+
+        <div class="col-4">
+          <label>Entry price</label>
+          <input id="entry" type="number" step="0.00001" value="1.10000" />
+        </div>
+        <div class="col-4">
+          <label>Stop loss price</label>
+          <input id="stop" type="number" step="0.00001" value="1.09500" />
+        </div>
+        <div class="col-4">
+          <label>Quote → Account conversion (B→C)</label>
+          <input id="conv" type="number" step="0.0000001" value="1" />
+          <div class="hint">If account ≠ quote, enter how many <span id="acctCcySpan">USD</span> per 1 <span id="quoteCcySpan">QUOTE</span>.</div>
+        </div>
+
+        <div class="col-3">
+          <label>Instrument type</label>
+          <input id="instType" disabled />
+          <div class="hint">Auto-set from selection</div>
+        </div>
+        <div class="col-3">
+          <label>Pip size / Tick size</label>
+          <input id="pipSize" type="number" step="0.00001" />
+          <div class="hint">Override if your broker differs</div>
+        </div>
+        <div class="col-3">
+          <label>Contract size (units per lot)</label>
+          <input id="contractSize" type="number" step="1" />
+          <div class="hint">FX: 100,000; XAU: 100 oz; XTI: 1,000 bbl</div>
+        </div>
+        <div class="col-3">
+          <label>Take Profit (auto 1:1 R:R)</label>
+          <input id="tp" type="number" step="0.00001" readonly />
+          <div class="hint">Same distance from entry as stop (in your favor)</div>
+        </div>
+
+        <div class="col-12 row">
+          <button class="btn" id="calcBtn">Calculate</button>
+          <button class="btn secondary" id="prefillBtn">Prefill</button>
+          <span class="pill" id="dirPill">–</span>
+          <span class="pill" id="rrPill">R:R 1:1</span>
+        </div>
+      </div>
+
+      <div class="grid out">
+        <div class="col-3 stat"><h3>Stop distance</h3><p><span id="stopPips">–</span> pips</p></div>
+        <div class="col-3 stat"><h3>TP distance</h3><p><span id="tpPips">–</span> pips</p></div>
+        <div class="col-3 stat"><h3>Pip value / lot (account)</h3><p><span id="pipPerLot">–</span></p></div>
+        <div class="col-3 stat"><h3>Risk amount</h3><p><span id="riskAmt">–</span></p></div>
+        <div class="col-3 stat"><h3>Position size (lots)</h3><p><span id="lots">–</span></p></div>
+        <div class="col-3 stat"><h3>Units of base (A)</h3><p><span id="units">–</span></p></div>
+        <div class="col-3 stat"><h3>Quote currency (B)</h3><p><span id="quoteCcyOut">–</span></p></div>
+        <div class="col-3 stat"><h3>Notes</h3><p id="notes">–</p></div>
+      </div>
+
+      <footer>
+        lots = risk_amount / (pip_value_per_lot_in_account × stop_pips). &nbsp;
+        pip value / lot = contract_size × pip_size × (B→C).
+        &nbsp; TP (1:1) = entry ± |entry − stop|.
+      </footer>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ===== Calculator ===== */
+  let display = document.getElementById("display");
+  let currentValue = "0"; let resetNext = false;
+
+  function updateDisplay(){ display.value = currentValue; }
+  function appendNum(n){ if (resetNext){ currentValue=n; resetNext=false; } else { currentValue = currentValue==="0"? n : currentValue+n; } updateDisplay(); }
+  function appendOp(op){ if (!isNaN(currentValue.slice(-1))) { currentValue += op; resetNext=false; updateDisplay(); } }
+  function clearEntry(){ currentValue="0"; updateDisplay(); }
+  function clearAll(){ currentValue="0"; updateDisplay(); }
+  function backspace(){ currentValue = currentValue.length>1? currentValue.slice(0,-1) : "0"; updateDisplay(); }
+  function reciprocal(){ currentValue = (1/parseFloat(currentValue||"1")).toString(); updateDisplay(); }
+  function square(){ currentValue = Math.pow(parseFloat(currentValue||"0"),2).toString(); updateDisplay(); }
+  function sqrt(){ currentValue = Math.sqrt(parseFloat(currentValue||"0")).toString(); updateDisplay(); }
+  function toggleSign(){ currentValue = (parseFloat(currentValue||"0")*-1).toString(); updateDisplay(); }
+  function calculate(){ try{ currentValue = eval(currentValue.replace(/÷/g,"/").replace(/×/g,"*")).toString(); } catch{ currentValue="Error"; } updateDisplay(); resetNext=true; }
+
+  document.addEventListener("keydown", e=>{
+    if (document.getElementById('sizerMode').style.display==='block') return;
+    if (!isNaN(e.key)) appendNum(e.key);
+    else if (["+", "-", "*", "/", "%"].includes(e.key)) appendOp(e.key);
+    else if (e.key === ".") appendNum(".");
+    else if (e.key === "Enter" || e.key === "=") calculate();
+    else if (e.key === "Backspace") backspace();
+    else if (e.key.toLowerCase() === "c" && !e.ctrlKey) clearAll();
+    else if (e.key === "Escape") clearAll();
+  });
+
+  /* ===== Mode switch ===== */
+  const btn = document.getElementById('modeSwitchBtn');
+  const calcMode = document.getElementById('calcMode');
+  const sizerMode = document.getElementById('sizerMode');
+
+  function showSizer(){
+    btn.textContent = 'Calculator';
+    calcMode.style.display='none';
+    sizerMode.style.display='block';
+    sizerMode.setAttribute('aria-hidden','false');
+    document.body.style.alignItems='initial';
+    document.body.style.justifyContent='initial';
+  }
+  function showCalc(){
+    btn.textContent = 'Position Sizer';
+    sizerMode.style.display='none';
+    sizerMode.setAttribute('aria-hidden','true');
+    calcMode.style.display='block';
+    document.body.style.alignItems='center';
+    document.body.style.justifyContent='center';
+  }
+  btn.addEventListener('click', ()=> (sizerMode.style.display==='block') ? showCalc() : showSizer());
+
+  /* ===== Position Sizer JS ===== */
+  (function(){
+    const $ = id => document.getElementById(id);
+
+    const THEME_ORDER = ['','light','dark']; // '' = Auto
+    function applyTheme(theme){
+      const root = document.documentElement;
+      if (!theme) {
+        // Auto: follow system
+        root.removeAttribute('data-theme');
+      } else {
+        root.setAttribute('data-theme', theme);
+      }
+      const icon = theme === 'light' ? '☀️' : theme === 'dark' ? '🌙' : '⌁';
+      const label = theme === 'light' ? 'Light' : theme === 'dark' ? 'Dark' : 'Auto';
+      $('themeIcon').textContent = icon; $('themeLabel').textContent = label;
+    }
+    function loadTheme(){
+      const saved = localStorage.getItem('ps_theme') || '';
+      applyTheme(saved);
+    }
+    function cycleTheme(){
+      const curr = document.documentElement.getAttribute('data-theme') || '';
+      const idx = THEME_ORDER.indexOf(curr);
+      const next = THEME_ORDER[(idx + 1) % THEME_ORDER.length];
+      applyTheme(next);
+      if (next === '') localStorage.removeItem('ps_theme'); else localStorage.setItem('ps_theme', next);
+    }
+    $('themeBtn').addEventListener('click', cycleTheme);
+    loadTheme();
+
+    const CCYS = ['USD','EUR','JPY','GBP','AUD','CAD','CHF','NZD','CNH'];
+    const COMMS = [
+      { sym: 'XAU/USD', name: 'Gold (XAU/USD)',     quote:'USD', pip:0.01,   contract:100,   type:'Commodity' },
+      { sym: 'XAG/USD', name: 'Silver (XAG/USD)',   quote:'USD', pip:0.001,  contract:5000,  type:'Commodity' },
+      { sym: 'XPT/USD', name: 'Platinum (XPT/USD)', quote:'USD', pip:0.01,   contract:100,   type:'Commodity' },
+      { sym: 'XPD/USD', name: 'Palladium (XPD/USD)',quote:'USD', pip:0.01,   contract:100,   type:'Commodity' },
+      { sym: 'XTI/USD', name: 'WTI Crude (XTI/USD)',quote:'USD', pip:0.01,   contract:1000,  type:'Commodity' },
+      { sym: 'XBR/USD', name: 'Brent (XBR/USD)',    quote:'USD', pip:0.01,   contract:1000,  type:'Commodity' },
+      { sym: 'COPPER/USD', name: 'Copper (COPPER/USD)', quote:'USD', pip:0.0005, contract:25000, type:'Commodity' },
+    ];
+    const pipSizeForFX = q => q==='JPY' ? 0.01 : 0.0001;
+
+    const FX_PAIRS = [];
+    for (let i=0;i<CCYS.length;i++){ for (let j=0;j<CCYS.length;j++){ if (i!==j) FX_PAIRS.push(`${CCYS[i]}/${CCYS[j]}`); } }
+
+    function populateAcct(){
+      const sel=$('acctCcy'); sel.innerHTML='';
+      CCYS.forEach(c=> sel.add(new Option(c,c,c==='USD',c==='USD')));
+      $('acctCcySpan').textContent=sel.value;
+    }
+    function populatePairs(){
+      const fx = FX_PAIRS.map(p=>`<option value="${p}">${p}</option>`).join('');
+      const cm = COMMS.map(c=>`<option value="${c.sym}">${c.name}</option>`).join('');
+      $('pair').innerHTML = `<optgroup label="FX (Majors & Crosses)">${fx}</optgroup><optgroup label="Commodities">${cm}</optgroup>`;
+      $('pair').value='EUR/USD';
+    }
+    function parsePair(s){ const t=(s||'').replace(/\s+/g,'').toUpperCase().split('/'); if(t.length!==2||t[0].length!==3||t[1].length<3)return null; return {base:t[0],quote:t[1]}; }
+    function fmt(n,d=2){ if(!isFinite(n)) return '–'; return Number(n).toLocaleString(undefined,{maximumFractionDigits:d,minimumFractionDigits:d}); }
+    function roundToStep(x,step){ if(!isFinite(x)||!isFinite(step)||step<=0) return x; return Math.round(x/step)*step; }
+
+    function setInstrumentDefaults(){
+      const sym=$('pair').value; const parsed=parsePair(sym);
+      let instType='FX', pip=0.0001, contract=100000, quote=parsed?parsed.quote:'USD';
+      const comm=COMMS.find(c=>c.sym===sym);
+      if(comm){ instType=comm.type; pip=comm.pip; contract=comm.contract; quote=comm.quote; }
+      else if(parsed){ pip=pipSizeForFX(parsed.quote); contract=100000; quote=parsed.quote; }
+
+      $('instType').value=instType;
+      $('pipSize').value=pip;
+      $('contractSize').value=contract;
+      $('quoteCcySpan').textContent=quote;
+      $('quoteCcyOut').textContent=quote;
+
+      const acct=$('acctCcy').value;
+      $('acctCcySpan').textContent=acct;
+      if(acct===quote) $('conv').value=1;
+
+      updateTP();
+    }
+    function updateTP(){
+      const entry=Number($('entry').value), stop=Number($('stop').value), pip=Number($('pipSize').value);
+      if(!isFinite(entry)||!isFinite(stop)||!isFinite(pip)||entry<=0||stop<=0||pip<=0){ $('tp').value=''; $('tpPips').textContent='–'; $('dirPill').textContent='–'; return; }
+      const dist=Math.abs(entry-stop); if(dist===0){ $('tp').value=''; $('tpPips').textContent='–'; $('dirPill').textContent='–'; return; }
+      const long = stop < entry; const tp = long ? (entry+dist) : (entry-dist);
+      $('tp').value=tp.toFixed(5); $('tpPips').textContent=(dist/pip).toFixed(1);
+      $('dirPill').textContent=long?'BUY (long)':'SELL (short)';
+    }
+    function calc(){
+      const acct=$('acctCcy').value, bal=Number($('balance').value), mode=$('riskMode').value, rv=Number($('riskVal').value);
+      const sym=$('pair').value, entry=Number($('entry').value), stop=Number($('stop').value), conv=Number($('conv').value);
+      const step=Number($('lotStep').value||0.01), pip=Number($('pipSize').value), contract=Number($('contractSize').value);
+      const parsed=parsePair(sym); const quote=parsed?parsed.quote:'USD';
+      if(!parsed){ alert('Please select a valid instrument'); return; }
+      if(!isFinite(bal)||bal<=0){ alert('Balance must be > 0'); return; }
+      if(!isFinite(entry)||!isFinite(stop)||entry<=0||stop<=0){ alert('Entry and Stop must be > 0'); return; }
+      if(!isFinite(conv)||conv<=0){ alert('Conversion (B→C) must be > 0'); return; }
+      if(!isFinite(pip)||pip<=0){ alert('Pip size must be > 0'); return; }
+      if(!isFinite(contract)||contract<=0){ alert('Contract size must be > 0'); return; }
+
+      const stopPips=Math.abs(entry-stop)/pip; if(stopPips===0){ alert('Stop distance is 0 pips.'); return; }
+      const riskAmt = (mode==='percent') ? (bal*(rv/100)) : rv; if(!isFinite(riskAmt)||riskAmt<=0){ alert('Risk must be > 0'); return; }
+
+      const pipPerLot = contract*pip*conv;
+      const rawLots = riskAmt/(pipPerLot*stopPips);
+      const lots = Math.max(0, roundToStep(rawLots, step));
+      const units = lots*contract;
+
+      $('stopPips').textContent=fmt(stopPips,1);
+      $('pipPerLot').textContent=`${fmt(pipPerLot,4)} ${acct}/pip/lot`;
+      $('riskAmt').textContent=`${fmt(riskAmt,2)} ${acct}`;
+      $('lots').textContent=fmt(lots,3);
+      $('units').textContent=fmt(units,0);
+      $('quoteCcyOut').textContent=quote;
+      $('notes').textContent=(acct===quote)?'Account currency equals quote; conversion = 1.':`Using conversion B→C = ${conv} (${quote}→${acct}).`;
     }
 
-    function appendNum(num) {
-        if (resetNext) {
-            currentValue = num;
-            resetNext = false;
-        } else {
-            currentValue = currentValue === "0" ? num : currentValue + num;
-        }
-        updateDisplay();
-    }
-
-    function appendOp(op) {
-        if (!isNaN(currentValue.slice(-1))) {
-            currentValue += op;
-            resetNext = false;
-            updateDisplay();
-        }
-    }
-
-    function clearEntry() {
-        currentValue = "0";
-        updateDisplay();
-    }
-
-    function clearAll() {
-        currentValue = "0";
-        updateDisplay();
-    }
-
-    function backspace() {
-        currentValue = currentValue.length > 1 ? currentValue.slice(0, -1) : "0";
-        updateDisplay();
-    }
-
-    function reciprocal() {
-        currentValue = (1 / parseFloat(currentValue)).toString();
-        updateDisplay();
-    }
-
-    function square() {
-        currentValue = Math.pow(parseFloat(currentValue), 2).toString();
-        updateDisplay();
-    }
-
-    function sqrt() {
-        currentValue = Math.sqrt(parseFloat(currentValue)).toString();
-        updateDisplay();
-    }
-
-    function toggleSign() {
-        currentValue = (parseFloat(currentValue) * -1).toString();
-        updateDisplay();
-    }
-
-    function calculate() {
-        try {
-            currentValue = eval(currentValue.replace(/÷/g, "/").replace(/×/g, "*")).toString();
-        } catch {
-            currentValue = "Error";
-        }
-        updateDisplay();
-        resetNext = true;
-    }
-
-    // Keyboard support
-    document.addEventListener("keydown", function(e) {
-        if (!isNaN(e.key)) {
-            appendNum(e.key);
-        } else if (["+", "-", "*", "/", "%"].includes(e.key)) {
-            appendOp(e.key);
-        } else if (e.key === ".") {
-            appendNum(".");
-        } else if (e.key === "Enter" || e.key === "=") {
-            calculate();
-        } else if (e.key === "Backspace") {
-            backspace();
-        } else if (e.key.toLowerCase() === "c" && e.ctrlKey === false) {
-            clearAll();
-        } else if (e.key === "Escape") {
-            clearAll();
-        }
+    $('riskMode').addEventListener('change', ()=>{
+      const m=$('riskMode').value;
+      if(m==='percent'){ $('riskLabel').textContent='Risk %'; $('riskVal').value='1'; $('riskHint').textContent='Example: 1 = risk 1% of balance'; }
+      else{ $('riskLabel').textContent='Risk amount'; $('riskVal').value='100'; $('riskHint').textContent='Fixed amount in your account currency'; }
     });
-  </script>
+    ['pair','acctCcy'].forEach(id=>$(id).addEventListener('change', setInstrumentDefaults));
+    ['entry','stop','pipSize'].forEach(id=>$(id).addEventListener('input', updateTP));
+    $('calcBtn').addEventListener('click', calc);
+    $('prefillBtn').addEventListener('click', ()=>{
+      $('acctCcy').value='USD'; $('balance').value=10000; $('riskMode').value='percent';
+      $('riskLabel').textContent='Risk %'; $('riskVal').value=1;
+      $('pair').value='EUR/USD'; $('lotStep').value=0.01; $('entry').value=1.1000; $('stop').value=1.0950;
+      setInstrumentDefaults(); $('conv').value=1; updateTP();
+    });
+
+    (function init(){ populateAcct(); populatePairs(); setInstrumentDefaults(); updateTP(); })();
+  })();
+</script>
 </body>
 </html>
