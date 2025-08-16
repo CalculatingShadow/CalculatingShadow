@@ -1,233 +1,124 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Position Sizer – FX & Commodities (How‑to, Examples & FAQ)</title>
-<meta name="description" content="Calculate position size from risk, stop distance, and pip value for FX and commodities. Includes step‑by‑step guide, worked examples, formulas, and FAQs.">
-
-<!-- Google AdSense (site verification/loader) -->
-<script async
-  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7533964735503056"
-  crossorigin="anonymous"></script>
-
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Position Sizer – FX & Commodities (How-to, Examples & FAQ)</title>
+<meta name="description" content="Calculate position size from risk, stop distance, and pip value for FX and commodities. Includes step-by-step guide, worked examples, formulas, and FAQs.">
 <style>
   :root{
     --bg:#0b0d12; --panel:#12151c; --text:#e9eef6; --muted:#8e96a3; --border:#1f2430;
-    --soft:rgba(127,151,255,.12); --accent:#2a6cff; --wrap:1280px;
-    --font:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    --soft:rgba(127,151,255,.12); --accent:#2a6cff; --wrap:1180px;
+    --font:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
   }
-  @media (prefers-color-scheme: light){
-    :root{ --bg:#f4f6fb; --panel:#fff; --text:#0f172a; --muted:#64748b; --border:#e7eaf0; --soft:rgba(31,76,240,.08); --accent:#1f4cf0; }
-  }
-  *{ box-sizing:border-box }
-  body{
-    margin:0; font-family:var(--font); color:var(--text);
-    background:
-      radial-gradient(1000px 600px at 10% -10%, var(--soft), transparent),
-      radial-gradient(800px 500px at 100% 0%, var(--soft), transparent),
-      var(--bg);
-    min-height:100vh;
-  }
-  a{ color:inherit; text-decoration:none }
-  .wrap{ max-width:var(--wrap); margin:0 auto; padding:16px 12px; }
-
-  /* Top nav */
-  .topbar{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
-  .btn{ display:inline-flex; align-items:center; justify-content:center; padding:10px 14px; border-radius:12px; font-weight:800; border:1px solid var(--border); background:var(--accent); color:#fff; }
-  .btn.secondary{ background:transparent; color:var(--text) }
-
-  /* Layout: ads left/right, tool centered */
-  .layout{ display:grid; grid-template-columns:1fr minmax(320px, 860px) 1fr; gap:16px; align-items:start; }
-  @media (max-width:980px){ .layout{ grid-template-columns:1fr; } }
-
-  .card{ background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:18px; overflow:visible; } /* prevent select clipping */
-  .sidebar{ position:sticky; top:14px; } @media (max-width:980px){ .sidebar{ position:static; } }
-  .ad{ display:block; min-height:250px; border:1px dashed var(--border); border-radius:12px; padding:16px; text-align:center; color:var(--muted); }
-
-  /* Form layout */
-  .grid{ display:grid; grid-template-columns:repeat(12,1fr); gap:18px; }
-  .col-3{ grid-column:span 3; } .col-4{ grid-column:span 4; } .col-6{ grid-column:span 6; } .col-12{ grid-column:span 12; }
-  @media (max-width:980px){ .col-3,.col-4,.col-6{ grid-column:span 12; } }
-  label{ display:block; font-size:12px; color:var(--muted); margin:0 0 6px; }
-  input,select{ width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.02)); color:var(--text); font:inherit; min-height:48px; }
-  input[readonly]{ opacity:.9; }
-  /* ensure options are readable across themes */
-  select option{ color:#0f172a; background:#ffffff; }
-  @media (prefers-color-scheme: dark){
-    select option{ color:#e9eef6; background:#0f1220; }
-  }
-
-  .hint{ font-size:11px; color:var(--muted); margin-top:4px; }
-  .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-  .pill{ font-size:12px; padding:6px 10px; border-radius:999px; background: var(--soft); border:1px solid var(--border); color: var(--text); }
-  .btn-primary{ padding:12px 16px; border-radius:12px; font-weight:800; background:var(--accent); color:#fff; border:1px solid var(--border); }
-  .btn-ghost{ padding:12px 16px; border-radius:12px; font-weight:800; background:transparent; color:var(--text); border:1px solid var(--border); }
-  .stat{ border:1px solid var(--border); border-radius:14px; padding:14px; }
-  .stat h3{ margin:0 0 6px; font-size:12px; color:var(--muted); }
-  .stat p{ margin:0; font-size:22px; font-weight:800; }
-  h1{ text-align:center; margin:0 0 6px }
-  .muted{ color:var(--muted) }
-  .small{ font-size:.95rem; text-align:center; margin-bottom:12px }
-  ul,ol{ margin:0 0 8px 18px }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:var(--font); color:var(--text); background:radial-gradient(1000px 600px at 10% -10%, var(--soft), transparent), radial-gradient(800px 500px at 100% 110%, var(--soft), transparent), var(--bg)}
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:var(--wrap); margin:0 auto; padding:18px 16px}
+  .pills{display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin:8px 0 18px}
+  .pill{padding:10px 16px; border-radius:999px; border:1px solid var(--border); background:rgba(255,255,255,.02); font-weight:800}
+  .pill:hover{background:rgba(255,255,255,.05)}
+  .pill.active{background:var(--accent); color:#fff; border-color:transparent; box-shadow:0 8px 22px rgba(42,108,255,.35)}
+  .card{ background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:18px; max-width:980px; margin:0 auto }
+  .grid{ display:grid; grid-template-columns:repeat(12,1fr); gap:18px }
+  .col-3{ grid-column:span 3 } .col-4{ grid-column:span 4 } .col-6{ grid-column:span 6 } .col-12{ grid-column:span 12 }
+  @media (max-width:980px){ .col-3,.col-4,.col-6{ grid-column:span 12 } }
+  label{ display:block; font-size:12px; color:var(--muted); margin:0 0 6px }
+  input,select{ width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.02)); color:var(--text); font:inherit; min-height:48px }
+  select option{ color:#0f172a; background:#fff } @media (prefers-color-scheme: dark){ select option{ color:#e9eef6; background:#0f1220 } }
+  .hint{ font-size:11px; color:var(--muted); margin-top:4px }
+  .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap }
+  .pillSmall{ font-size:12px; padding:6px 10px; border-radius:999px; background: rgba(127,151,255,.12); border:1px solid var(--border); color: var(--text) }
+  .btn-primary{ padding:12px 16px; border-radius:12px; font-weight:800; background:var(--accent); color:#fff; border:1px solid var(--border) }
+  .btn-ghost{ padding:12px 16px; border-radius:12px; font-weight:800; background:transparent; color:var(--text); border:1px solid var(--border) }
+  .stat{ border:1px solid var(--border); border-radius:14px; padding:14px }
+  .stat h3{ margin:0 0 6px; font-size:12px; color:var(--muted) }
+  .stat p{ margin:0; font-size:22px; font-weight:800 }
+  h1{ text-align:center; margin:0 0 6px } .muted{ color:var(--muted) } .small{ font-size:.95rem } ol,ul{ margin:0 0 8px 18px }
 </style>
-
-<!-- FAQ structured data -->
 <script type="application/ld+json">
-{
-  "@context":"https://schema.org",
-  "@type":"FAQPage",
-  "mainEntity":[
-    {"@type":"Question","name":"How do I choose the conversion (B→C)?","acceptedAnswer":{"@type":"Answer","text":"If your account currency equals the quote currency (B) of the instrument, use 1. Otherwise enter how many units of your account currency equal one unit of B."}},
-    {"@type":"Question","name":"What formula is used for lots?","acceptedAnswer":{"@type":"Answer","text":"Lots = Risk amount / (Pip value per lot in account × Stop distance in pips). Pip value per lot = Contract size × Pip size × (B→C)."}},
-    {"@type":"Question","name":"Does the tool include commission or slippage?","acceptedAnswer":{"@type":"Answer","text":"No. It calculates risk from price distance only. Consider spreads, commissions and slippage separately."}}
-  ]
-}
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"How do I choose the conversion (B→C)?","acceptedAnswer":{"@type":"Answer","text":"If your account currency equals the quote currency (B) of the instrument, use 1. Otherwise enter how many units of your account currency equal one unit of B."}},
+{"@type":"Question","name":"What formula is used for lots?","acceptedAnswer":{"@type":"Answer","text":"Lots = Risk amount / (Pip value per lot in account × Stop distance in pips). Pip value per lot = Contract size × Pip size × (B→C)."}},
+{"@type":"Question","name":"Does the tool include commission or slippage?","acceptedAnswer":{"@type":"Answer","text":"No. It calculates risk from price distance only. Consider spreads, commissions and slippage separately."}}
+]}
 </script>
 </head>
 <body>
 <div class="wrap">
-
-  <!-- Top nav -->
-  <div class="topbar" role="navigation" aria-label="Quick links">
-    <a class="btn secondary" href="index.html">Calculator</a>
-    <a class="btn secondary" href="Compound-Interest.html">Compound Interest</a>
-    <a class="btn secondary" href="Scientific-Calculator.html">Scientific Calculator</a>
-  </div>
+  <nav class="pills" aria-label="Primary">
+    <a class="pill" href="index.html">Home</a>
+    <a class="pill" href="Calculator.html">Standard</a>
+    <a class="pill" href="Scientific-Calculator.html">Scientific</a>
+    <a class="pill active" href="position-sizer.html" aria-current="page">Position Sizer</a>
+    <a class="pill" href="Compound-Interest.html">Compound Interest</a>
+  </nav>
 
   <h1>Position Sizer</h1>
-  <p class="small muted">Compute lots/units from account risk, stop distance and pip value.</p>
+  <p class="small muted" style="text-align:center">Compute lots/units from account risk, stop distance and pip value.</p>
 
-  <div class="layout">
-    <!-- Left ad -->
-    <aside class="sidebar">
-      <div class="card"><div class="ad" aria-label="Advertisement placeholder">Ad space (left)</div></div>
-    </aside>
+  <main class="card" aria-label="Position sizing tool">
+    <div class="grid">
+      <div class="col-4"><label>Account currency (C)</label><select id="acctCcy"></select></div>
+      <div class="col-4"><label>Account balance</label><input id="balance" type="number" step="0.01" value="10000" /></div>
+      <div class="col-4"><label>Lot step</label><input id="lotStep" type="number" step="0.001" value="0.01" /><div class="hint">0.01 (micro), 0.1 (mini), 1.0 (standard)</div></div>
 
-    <!-- Center column -->
-    <main class="card" aria-label="Position sizing tool">
-
-      <!-- ===== Tool form ===== -->
-      <div class="grid" aria-label="Position sizing form">
-        <div class="col-4">
-          <label>Account currency (C)</label>
-          <select id="acctCcy"></select>
-        </div>
-        <div class="col-4">
-          <label>Account balance</label>
-          <input id="balance" type="number" step="0.01" value="10000" />
-        </div>
-        <div class="col-4">
-          <label>Lot step</label>
-          <input id="lotStep" type="number" step="0.001" value="0.01" />
-          <div class="hint">0.01 (micro), 0.1 (mini), 1.0 (standard)</div>
-        </div>
-
-        <div class="col-4">
-          <label>Risk mode</label>
-          <select id="riskMode">
-            <option value="percent" selected>Percent of balance</option>
-            <option value="amount">Fixed amount</option>
-          </select>
-        </div>
-        <div class="col-4">
-          <label id="riskLabel">Risk %</label>
-          <input id="riskVal" type="number" step="0.01" value="1" />
-          <div class="hint" id="riskHint">Example: 1 = risk 1% of balance</div>
-        </div>
-        <div class="col-4">
-          <label>Pair / Instrument</label>
-          <select id="pair"></select>
-        </div>
-
-        <div class="col-4">
-          <label>Entry price</label>
-          <input id="entry" type="number" step="0.00001" value="1.10000" />
-        </div>
-        <div class="col-4">
-          <label>Stop loss price</label>
-          <input id="stop" type="number" step="0.00001" value="1.09500" />
-        </div>
-        <div class="col-4">
-          <label>Quote → Account conversion (B→C)</label>
-          <input id="conv" type="number" step="0.0000001" value="1" />
-          <div class="hint">If account ≠ quote, enter how many <span id="acctCcySpan">USD</span> per 1 <span id="quoteCcySpan">QUOTE</span>.</div>
-        </div>
-
-        <div class="col-3">
-          <label>Instrument type</label>
-          <input id="instType" disabled />
-          <div class="hint">Auto-set from selection</div>
-        </div>
-        <div class="col-3">
-          <label>Pip size / Tick size</label>
-          <input id="pipSize" type="number" step="0.00001" />
-          <div class="hint">Override if your broker differs</div>
-        </div>
-        <div class="col-3">
-          <label>Contract size (units per lot)</label>
-          <input id="contractSize" type="number" step="1" />
-          <div class="hint">FX: 100,000; XAU: 100 oz; XTI: 1,000 bbl</div>
-        </div>
-        <div class="col-3">
-          <label>Take Profit (auto 1:1 R:R)</label>
-          <input id="tp" type="number" step="0.00001" readonly />
-          <div class="hint">Same distance from entry as stop (in your favor)</div>
-        </div>
-
-        <div class="col-12 row">
-          <button class="btn-primary" id="calcBtn">Calculate</button>
-          <button class="btn-ghost" id="prefillBtn">Prefill</button>
-          <span class="pill" id="dirPill">–</span>
-          <span class="pill" id="rrPill">R:R 1:1</span>
-        </div>
+      <div class="col-4"><label>Risk mode</label>
+        <select id="riskMode"><option value="percent" selected>Percent of balance</option><option value="amount">Fixed amount</option></select>
       </div>
+      <div class="col-4"><label id="riskLabel">Risk %</label><input id="riskVal" type="number" step="0.01" value="1" /><div class="hint" id="riskHint">Example: 1 = risk 1% of balance</div></div>
+      <div class="col-4"><label>Pair / Instrument</label><select id="pair"></select></div>
 
-      <!-- Outputs -->
-      <div class="grid" style="margin-top:14px" aria-live="polite">
-        <div class="col-3 stat"><h3>Stop distance</h3><p><span id="stopPips">–</span> pips</p></div>
-        <div class="col-3 stat"><h3>TP distance</h3><p><span id="tpPips">–</span> pips</p></div>
-        <div class="col-3 stat"><h3>Pip value / lot (account)</h3><p><span id="pipPerLot">–</span></p></div>
-        <div class="col-3 stat"><h3>Risk amount</h3><p><span id="riskAmt">–</span></p></div>
-        <div class="col-3 stat"><h3>Position size (lots)</h3><p><span id="lots">–</span></p></div>
-        <div class="col-3 stat"><h3>Units of base (A)</h3><p><span id="units">–</span></p></div>
-        <div class="col-3 stat"><h3>Quote currency (B)</h3><p><span id="quoteCcyOut">–</span></p></div>
-        <div class="col-3 stat"><h3>Notes</h3><p id="notes">–</p></div>
+      <div class="col-4"><label>Entry price</label><input id="entry" type="number" step="0.00001" value="1.10000" /></div>
+      <div class="col-4"><label>Stop loss price</label><input id="stop" type="number" step="0.00001" value="1.09500" /></div>
+      <div class="col-4"><label>Quote → Account conversion (B→C)</label><input id="conv" type="number" step="0.0000001" value="1" /><div class="hint">If account ≠ quote, enter how many <span id="acctCcySpan">USD</span> per 1 <span id="quoteCcySpan">QUOTE</span>.</div></div>
+
+      <div class="col-3"><label>Instrument type</label><input id="instType" disabled /><div class="hint">Auto-set from selection</div></div>
+      <div class="col-3"><label>Pip size / Tick size</label><input id="pipSize" type="number" step="0.00001" /><div class="hint">Override if your broker differs</div></div>
+      <div class="col-3"><label>Contract size (units per lot)</label><input id="contractSize" type="number" step="1" /><div class="hint">FX: 100,000; XAU: 100 oz; XTI: 1,000 bbl</div></div>
+      <div class="col-3"><label>Take Profit (auto 1:1 R:R)</label><input id="tp" type="number" step="0.00001" readonly /><div class="hint">Same distance from entry as stop</div></div>
+
+      <div class="col-12 row">
+        <button class="btn-primary" id="calcBtn">Calculate</button>
+        <button class="btn-ghost" id="prefillBtn">Prefill</button>
+        <span class="pillSmall" id="dirPill">–</span>
+        <span class="pillSmall" id="rrPill">R:R 1:1</span>
       </div>
+    </div>
 
-      <!-- Supporting content -->
-      <h2 style="margin-top:18px">How to Use</h2>
-      <ol>
-        <li>Select your <strong>account currency</strong> and balance.</li>
-        <li>Choose risk as a <strong>% of balance</strong> or a fixed amount.</li>
-        <li>Select the instrument and enter <strong>entry</strong> and <strong>stop</strong>.</li>
-        <li>If account currency ≠ quote currency, provide the <strong>B→C conversion</strong>.</li>
-        <li>Click <strong>Calculate</strong> to get lots, units, and pip value.</li>
-      </ol>
+    <div class="grid" style="margin-top:14px" aria-live="polite">
+      <div class="col-3 stat"><h3>Stop distance</h3><p><span id="stopPips">–</span> pips</p></div>
+      <div class="col-3 stat"><h3>TP distance</h3><p><span id="tpPips">–</span> pips</p></div>
+      <div class="col-3 stat"><h3>Pip value / lot (account)</h3><p><span id="pipPerLot">–</span></p></div>
+      <div class="col-3 stat"><h3>Risk amount</h3><p><span id="riskAmt">–</span></p></div>
+      <div class="col-3 stat"><h3>Position size (lots)</h3><p><span id="lots">–</span></p></div>
+      <div class="col-3 stat"><h3>Units of base (A)</h3><p><span id="units">–</span></p></div>
+      <div class="col-3 stat"><h3>Quote currency (B)</h3><p><span id="quoteCcyOut">–</span></p></div>
+      <div class="col-3 stat"><h3>Notes</h3><p id="notes">–</p></div>
+    </div>
 
-      <h2>Worked Example</h2>
-      <p><strong>EUR/USD example:</strong> Account $10,000, risk 1%, entry 1.1000, stop 1.0950.  
-      Stop distance = 50 pips. Pip value/lot ≈ $10. Risk amount = $100 → <code>lots = 100 / (10 × 50) = 0.20</code> lots (≈ 20,000 units).</p>
+    <h2 style="margin-top:18px">How to Use</h2>
+    <ol>
+      <li>Select your <strong>account currency</strong> and balance.</li>
+      <li>Choose risk as a <strong>% of balance</strong> or a fixed amount.</li>
+      <li>Select the instrument and enter <strong>entry</strong> and <strong>stop</strong>.</li>
+      <li>If account currency ≠ quote currency, provide the <strong>B→C conversion</strong>.</li>
+      <li>Click <strong>Calculate</strong> to get lots, units, and pip value.</li>
+    </ol>
 
-      <h2>Formulas</h2>
-      <p><code>lots = risk_amount / (pip_value_per_lot_in_account × stop_pips)</code></p>
-      <p><code>pip_value_per_lot = contract_size × pip_size × (B→C)</code></p>
-      <p class="muted small"><em>Educational use only. This tool ignores spreads, slippage and commissions.</em></p>
+    <h2>Worked Example</h2>
+    <p><strong>EUR/USD example:</strong> Account $10,000, risk 1%, entry 1.1000, stop 1.0950.  
+    Stop distance = 50 pips. Pip value/lot ≈ $10. Risk amount = $100 → <code>lots = 100 / (10 × 50) = 0.20</code> lots (≈ 20,000 units).</p>
 
-    </main>
-
-    <!-- Right ad -->
-    <aside class="sidebar">
-      <div class="card"><div class="ad" aria-label="Advertisement placeholder">Ad space (right)</div></div>
-    </aside>
-  </div>
+    <h2>Formulas</h2>
+    <p><code>lots = risk_amount / (pip_value_per_lot_in_account × stop_pips)</code></p>
+    <p><code>pip_value_per_lot = contract_size × pip_size × (B→C)</code></p>
+    <p class="muted small"><em>Educational use only. This tool ignores spreads, slippage and commissions.</em></p>
+  </main>
 </div>
 
 <script>
-  // ===== Position Sizer JS =====
   const $ = id => document.getElementById(id);
-
   const CCYS = ['USD','EUR','JPY','GBP','AUD','CAD','CHF','NZD','CNH'];
   const COMMS = [
     { sym: 'XAU/USD', name: 'Gold (XAU/USD)',     quote:'USD', pip:0.01,   contract:100,   type:'Commodity' },
@@ -243,20 +134,16 @@
   const FX_PAIRS = [];
   for (let i=0;i<CCYS.length;i++){ for (let j=0;j<CCYS.length;j++){ if (i!==j) FX_PAIRS.push(`${CCYS[i]}/${CCYS[j]}`); } }
 
-  // FIXED: build options explicitly and set selection safely
   function populateAcct(){
     const sel = $('acctCcy');
     sel.innerHTML = '';
     CCYS.forEach((c, i) => {
       const opt = document.createElement('option');
-      opt.value = c;
-      opt.textContent = c;
-      if (i === 0) opt.selected = true; // default USD
+      opt.value = c; opt.textContent = c; if (i === 0) opt.selected = true;
       sel.appendChild(opt);
     });
     $('acctCcySpan').textContent = sel.value;
   }
-
   function populatePairs(){
     const fx = FX_PAIRS.map(p=>`<option value="${p}">${p}</option>`).join('');
     const cm = COMMS.map(c=>`<option value="${c.sym}">${c.name}</option>`).join('');
@@ -338,7 +225,6 @@
     setInstrumentDefaults(); $('conv').value=1; updateTP();
   });
 
-  // init
   (function init(){ populateAcct(); populatePairs(); setInstrumentDefaults(); updateTP(); })();
 </script>
 </body>
