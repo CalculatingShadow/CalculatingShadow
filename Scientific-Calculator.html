@@ -1,240 +1,129 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Scientific Calculator – Degrees/Radians, Trig, Logs, Powers</title>
-<meta name="description" content="Free scientific calculator with degrees/radians, trig, logarithms, powers, factorial, memory keys, and keyboard support. Includes how‑to, examples, formulas, and FAQs.">
-
-<!-- Google AdSense (site verification/loader) -->
-<script async
-  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7533964735503056"
-  crossorigin="anonymous"></script>
-
+<meta name="description" content="Free scientific calculator with degrees/radians, trigonometry, logarithms, powers, factorial, memory keys, and keyboard support. Includes how-to, examples, formulas, and FAQs.">
 <style>
   :root{
     --bg:#0b0d12; --panel:#12151c; --text:#e9eef6; --muted:#8e96a3; --border:#1f2430;
-    --soft:rgba(127,151,255,.12); --accent:#2a6cff; --wrap:1280px;
-    --font:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    --soft:rgba(127,151,255,.12); --accent:#2a6cff; --wrap:1180px;
+    --font:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
   }
-  @media (prefers-color-scheme: light){
-    :root{ --bg:#f4f6fb; --panel:#fff; --text:#0f172a; --muted:#64748b; --border:#e7eaf0; --soft:rgba(31,76,240,.08); --accent:#1f4cf0; }
-  }
-  *{ box-sizing:border-box }
-  body{
-    margin:0; font-family:var(--font); color:var(--text);
-    background:
-      radial-gradient(1000px 600px at 10% -10%, var(--soft), transparent),
-      radial-gradient(800px 500px at 100% 0%, var(--soft), transparent),
-      var(--bg);
-    min-height:100vh;
-  }
-  a{ color:inherit; text-decoration:none }
-  .wrap{ max-width:var(--wrap); margin:0 auto; padding:16px 12px; }
-
-  .topbar{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
-  .btn{ display:inline-flex; align-items:center; justify-content:center; padding:10px 14px; border-radius:12px; font-weight:800; border:1px solid var(--border); background:var(--accent); color:#fff; }
-  .btn.secondary{ background:transparent; color:var(--text) }
-
-  .layout{ display:grid; grid-template-columns:1fr minmax(320px, 760px) 1fr; gap:16px; align-items:start; }
-  @media (max-width:980px){ .layout{ grid-template-columns:1fr; } }
-
-  .card{ background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:18px; overflow:visible; }
-  .sidebar{ position:sticky; top:14px; } @media (max-width:980px){ .sidebar{ position:static; } }
-  .ad{ display:block; min-height:250px; border:1px dashed var(--border); border-radius:12px; padding:16px; color:var(--muted); text-align:center; }
-
-  h1{ text-align:center; margin:0 0 6px }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:var(--font); color:var(--text); background:radial-gradient(1000px 600px at 10% -10%, var(--soft), transparent), radial-gradient(800px 500px at 100% 110%, var(--soft), transparent), var(--bg)}
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:var(--wrap); margin:0 auto; padding:18px 16px}
+  .pills{display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin:8px 0 18px}
+  .pill{padding:10px 16px; border-radius:999px; border:1px solid var(--border); background:rgba(255,255,255,.02); font-weight:800}
+  .pill:hover{background:rgba(255,255,255,.05)}
+  .pill.active{background:var(--accent); color:#fff; border-color:transparent; box-shadow:0 8px 22px rgba(42,108,255,.35)}
+  h1{ text-align:center; font-size:28px; margin:10px 0 4px }
   .muted{ color:var(--muted) }
-  .small{ font-size:.95rem; text-align:center; margin-bottom:12px }
-
-  /* Calculator */
-  .scicalc{ width:100%; max-width:760px; margin:0 auto; }
-  .display{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
-  .screen{
-    width:100%; height:70px; border:none; border-radius:12px; background:#1b1f24; color:#fff;
-    text-align:right; font-size:34px; line-height:70px; padding:0 16px; box-shadow:inset 0 0 0 1px var(--border);
-  }
-  .mode{
-    display:inline-flex; gap:6px; align-items:center; padding:8px 10px; border-radius:10px;
-    border:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.02)); font-weight:800;
-  }
-  .mode button{
-    border:1px solid var(--border); background:transparent; color:var(--text); font-weight:800;
-    border-radius:8px; padding:6px 10px; cursor:pointer;
-  }
-  .mode .active{ background:var(--accent); color:#fff; }
-
-  .keys{ display:grid; grid-template-columns:repeat(6,1fr); gap:10px; }
-  .key{
-    background:#2b2f33; border:none; border-radius:10px; color:#e7e7e7;
-    font-size:16px; height:54px; cursor:pointer; transition:transform .03s, background .15s; font-weight:700;
-  }
-  .key:hover{ background:#34393e; } .key:active{ transform:translateY(1px); }
-  .key.wide{ grid-column:span 2; }
-  .key.equal{ background:#1296db; color:#fff; }
-
-  /* Content blocks */
-  .content{ margin-top:16px; }
-  .content h2{ margin:0 0 8px }
-  .content .card + .card{ margin-top:12px; }
-  ol, ul{ margin:0 0 8px 18px }
+  .card{ background:var(--panel); border:1px solid var(--border); border-radius:18px; padding:18px; margin-bottom:18px; max-width:960px; margin-left:auto; margin-right:auto }
+  .scicalc{ max-width:760px; margin:0 auto }
+  .display{ display:flex; align-items:center; gap:10px; margin-bottom:12px }
+  .screen{ width:100%; height:70px; border:none; border-radius:12px; background:#1b1f24; color:#fff; text-align:right; font-size:34px; line-height:70px; padding:0 16px; box-shadow:inset 0 0 0 1px var(--border) }
+  .mode{ display:inline-flex; gap:6px; align-items:center; padding:8px 10px; border-radius:10px; border:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.02)); font-weight:800 }
+  .mode button{ border:1px solid var(--border); background:transparent; color:var(--text); font-weight:800; border-radius:8px; padding:6px 10px; cursor:pointer }
+  .mode .active{ background:var(--accent); color:#fff }
+  .keys{ display:grid; grid-template-columns:repeat(6,1fr); gap:10px }
+  .key{ background:#2b2f33; border:none; border-radius:10px; color:#e7e7e7; font-size:16px; height:54px; cursor:pointer; transition:transform .03s, background .15s; font-weight:700 }
+  .key:hover{ background:#34393e } .key:active{ transform:translateY(1px) }
+  .key.wide{ grid-column:span 2 } .key.equal{ background:#1296db; color:#fff }
+  .content{ margin-top:16px } .content .card + .card{ margin-top:12px } ol, ul{ margin:0 0 8px 18px }
 </style>
-
-<!-- FAQ structured data -->
 <script type="application/ld+json">
-{
-  "@context":"https://schema.org",
-  "@type":"FAQPage",
-  "mainEntity":[
-    {"@type":"Question","name":"How do I switch between degrees and radians?","acceptedAnswer":{"@type":"Answer","text":"Use the DEG/RAD toggle next to the display. Trig functions (sin, cos, tan and their inverses) respect this setting."}},
-    {"@type":"Question","name":"What does the % key do?","acceptedAnswer":{"@type":"Answer","text":"A trailing percent converts a number to its fraction (e.g., 15% becomes 0.15). You can use it in expressions like 200*15% to compute 15 percent of 200."}},
-    {"@type":"Question","name":"How is factorial handled?","acceptedAnswer":{"@type":"Answer","text":"Factorial n! works for whole, non‑negative n. For other values the result is not defined and returns an error."}},
-    {"@type":"Question","name":"Why does x^y use ^ but evaluate correctly?","acceptedAnswer":{"@type":"Answer","text":"The interface accepts ^ for power and internally converts it to exponentiation during evaluation."}},
-    {"@type":"Question","name":"Is this calculator suitable for financial decisions?","acceptedAnswer":{"@type":"Answer","text":"This tool is for education only. It does not account for fees, taxes, or market risk. Use dedicated finance tools on this site for loans or investing."}}
-  ]
-}
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"How do I switch between degrees and radians?","acceptedAnswer":{"@type":"Answer","text":"Use the DEG/RAD toggle next to the display. Trig functions (sin, cos, tan and their inverses) respect this setting."}},
+{"@type":"Question","name":"What does the % key do?","acceptedAnswer":{"@type":"Answer","text":"A trailing percent converts a number to its fraction (e.g., 15% becomes 0.15). You can use it in expressions like 200*15% to compute 15 percent of 200."}},
+{"@type":"Question","name":"How is factorial handled?","acceptedAnswer":{"@type":"Answer","text":"Factorial n! works for whole, non-negative n. For other values the result is not defined and returns an error."}},
+{"@type":"Question","name":"Why does x^y use ^ but evaluate correctly?","acceptedAnswer":{"@type":"Answer","text":"The interface accepts ^ for power and internally converts it to exponentiation during evaluation."}},
+{"@type":"Question","name":"Is this calculator suitable for financial decisions?","acceptedAnswer":{"@type":"Answer","text":"This tool is for education only. It does not account for fees, taxes, or market risk. Use dedicated finance tools on this site for loans or investing."}}
+]}
 </script>
 </head>
 <body>
 <div class="wrap">
-  <div class="topbar" role="navigation" aria-label="Quick links">
-    <a class="btn secondary" href="index.html">Calculator</a>
-    <a class="btn secondary" href="position-sizer.html">Position Sizer</a>
-    <a class="btn secondary" href="Compound-Interest.html">Compound Interest</a>
-  </div>
+  <nav class="pills" aria-label="Primary">
+    <a class="pill" href="index.html">Home</a>
+    <a class="pill" href="Calculator.html">Standard</a>
+    <a class="pill active" href="Scientific-Calculator.html" aria-current="page">Scientific</a>
+    <a class="pill" href="position-sizer.html">Position Sizer</a>
+    <a class="pill" href="Compound-Interest.html">Compound Interest</a>
+  </nav>
 
   <h1>Scientific Calculator</h1>
-  <p class="muted small">Trig (Deg/Rad), logs, powers, factorial, memory keys, and keyboard control.</p>
+  <p class="muted" style="text-align:center">Trig (Deg/Rad), logs, powers, factorial, memory keys, and keyboard control.</p>
 
-  <div class="layout">
-    <aside class="sidebar"><div class="card"><div class="ad">Ad space (left)</div></div></aside>
-
-    <main class="card">
-      <!-- Calculator -->
-      <div class="scicalc" role="application" aria-label="Scientific calculator">
-        <div class="display">
-          <input id="screen" class="screen" type="text" value="0" aria-live="polite" />
-          <div class="mode" aria-label="Angle mode">
-            <button id="degBtn" class="active" type="button">DEG</button>
-            <button id="radBtn" type="button">RAD</button>
-          </div>
-        </div>
-
-        <div class="keys">
-          <!-- Memory -->
-          <button class="key" data-act="MC">MC</button>
-          <button class="key" data-act="MR">MR</button>
-          <button class="key" data-act="Mplus">M+</button>
-          <button class="key" data-act="Mminus">M−</button>
-          <button class="key" data-act="MS">MS</button>
-          <button class="key" data-act="C">C</button>
-
-          <!-- Functions -->
-          <button class="key" data-ins="sin(">sin</button>
-          <button class="key" data-ins="cos(">cos</button>
-          <button class="key" data-ins="tan(">tan</button>
-          <button class="key" data-ins="asin(">asin</button>
-          <button class="key" data-ins="acos(">acos</button>
-          <button class="key" data-ins="atan(">atan</button>
-
-          <button class="key" data-ins="ln(">ln</button>
-          <button class="key" data-ins="log10(">log</button>
-          <button class="key" data-ins="exp(">exp</button>
-          <button class="key" data-ins="sqrt(">√</button>
-          <button class="key" data-ins="abs(">abs</button>
-          <button class="key" data-act="back">⌫</button>
-
-          <!-- Powers / constants -->
-          <button class="key" data-ins="^">x^y</button>
-          <button class="key" data-ins="x2">x²</button>
-          <button class="key" data-ins="10^">10ˣ</button>
-          <button class="key" data-ins="π">π</button>
-          <button class="key" data-ins="ℯ">e</button>
-          <button class="key" data-ins="!">n!</button>
-
-          <!-- Parens / % / sign -->
-          <button class="key" data-ins="(">(</button>
-          <button class="key" data-ins=")">)</button>
-          <button class="key" data-ins="%">%</button>
-          <button class="key" data-act="sign">±</button>
-          <button class="key" data-ins=",">,</button>
-          <button class="key" data-act="CE">CE</button>
-
-          <!-- Digits/operators -->
-          <button class="key" data-ins="7">7</button>
-          <button class="key" data-ins="8">8</button>
-          <button class="key" data-ins="9">9</button>
-          <button class="key" data-ins="/">÷</button>
-          <button class="key" data-ins="*">×</button>
-          <button class="key" data-ins="^2">^2</button>
-
-          <button class="key" data-ins="4">4</button>
-          <button class="key" data-ins="5">5</button>
-          <button class="key" data-ins="6">6</button>
-          <button class="key" data-ins="-">−</button>
-          <button class="key" data-ins="+">+</button>
-          <button class="key" data-ins=".">.</button>
-
-          <button class="key" data-ins="1">1</button>
-          <button class="key" data-ins="2">2</button>
-          <button class="key" data-ins="3">3</button>
-          <button class="key wide" data-ins="0">0</button>
-          <button class="key equal" data-act="eval">=</button>
-        </div>
-
-        <div class="small muted" style="margin-top:10px;text-align:center">
-          Tips: use keyboard (0‑9, + − × / ^ ( ) . Backspace, Enter). Functions like <code>sin(</code>, <code>ln(</code> auto‑insert.
+  <main class="card">
+    <div class="scicalc" role="application" aria-label="Scientific calculator">
+      <div class="display">
+        <input id="screen" class="screen" type="text" value="0" aria-live="polite" />
+        <div class="mode" aria-label="Angle mode">
+          <button id="degBtn" class="active" type="button">DEG</button>
+          <button id="radBtn" type="button">RAD</button>
         </div>
       </div>
 
-      <!-- Content blocks -->
-      <div class="content">
-        <div class="card">
-          <h2>How to Use</h2>
-          <ol class="small">
-            <li>Choose <strong>DEG</strong> or <strong>RAD</strong> for trigonometry.</li>
-            <li>Enter expressions using buttons or your keyboard. Use parentheses for order of operations.</li>
-            <li>Common functions: <code>sin(</code>, <code>cos(</code>, <code>tan(</code>, <code>ln(</code>, <code>log(</code>, <code>√</code>, <code>x^y</code>, <code>n!</code>.</li>
-            <li>Use memory keys <strong>MC/MR/M+/M−/MS</strong> to store and recall numbers.</li>
-          </ol>
-        </div>
-
-        <div class="card">
-          <h2>Worked Examples</h2>
-          <ul class="small">
-            <li><strong>Trig (Degrees):</strong> <code>sin(30)</code> → <em>0.5</em> (ensure DEG is selected).</li>
-            <li><strong>Logarithms:</strong> <code>log(1000)</code> → <em>3</em>, <code>ln(e)</code> → <em>1</em>.</li>
-            <li><strong>Powers:</strong> <code>2 ^ 10</code> → <em>1024</em>, <code>10^ 3</code> → <em>1000</em>, <code>x²</code> squares the prior value.</li>
-            <li><strong>Percent:</strong> <code>200 * 15%</code> → <em>30</em>.</li>
-            <li><strong>Factorial:</strong> <code>6!</code> → <em>720</em> (integers ≥ 0 only).</li>
-          </ul>
-        </div>
-
-        <div class="card">
-          <h2>Formulas & Notes</h2>
-          <p class="small">
-            Power uses caret: <code>a ^ b</code> (internally converted to exponentiation). Trig respects angle mode.<br>
-            Percent converts a trailing <code>%</code> into ÷100. Factorial <code>n!</code> is defined for whole, non‑negative <code>n</code>.
-          </p>
-          <p class="small muted"><em>Educational use only. Double‑check critical calculations.</em></p>
-        </div>
-
-        <div class="card">
-          <h2>Frequently Asked Questions</h2>
-          <h3>How do I switch between degrees and radians?</h3>
-          <p class="small">Click DEG or RAD next to the display. Trig and inverse trig use your selection.</p>
-          <h3>Why does <code>^</code> work for powers?</h3>
-          <p class="small">The UI accepts <code>^</code> and converts it to exponentiation during evaluation.</p>
-          <h3>What does the percent symbol do?</h3>
-          <p class="small">A trailing <code>%</code> converts a number to its fraction (e.g., <code>15%</code> → <code>0.15</code>), so <code>200*15%</code> gives <code>30</code>.</p>
-          <h3>Can I use factorial on decimals?</h3>
-          <p class="small">No—<code>n!</code> requires a non‑negative integer.</p>
-        </div>
+      <div class="keys">
+        <button class="key" data-act="MC">MC</button><button class="key" data-act="MR">MR</button><button class="key" data-act="Mplus">M+</button><button class="key" data-act="Mminus">M−</button><button class="key" data-act="MS">MS</button><button class="key" data-act="C">C</button>
+        <button class="key" data-ins="sin(">sin</button><button class="key" data-ins="cos(">cos</button><button class="key" data-ins="tan(">tan</button><button class="key" data-ins="asin(">asin</button><button class="key" data-ins="acos(">acos</button><button class="key" data-ins="atan(">atan</button>
+        <button class="key" data-ins="ln(">ln</button><button class="key" data-ins="log10(">log</button><button class="key" data-ins="exp(">exp</button><button class="key" data-ins="sqrt(">√</button><button class="key" data-ins="abs(">abs</button><button class="key" data-act="back">⌫</button>
+        <button class="key" data-ins="^">x^y</button><button class="key" data-ins="x2">x²</button><button class="key" data-ins="10^">10ˣ</button><button class="key" data-ins="π">π</button><button class="key" data-ins="ℯ">e</button><button class="key" data-ins="!">n!</button>
+        <button class="key" data-ins="(">(</button><button class="key" data-ins=")">)</button><button class="key" data-ins="%">%</button><button class="key" data-act="sign">±</button><button class="key" data-ins=",">,</button><button class="key" data-act="CE">CE</button>
+        <button class="key" data-ins="7">7</button><button class="key" data-ins="8">8</button><button class="key" data-ins="9">9</button><button class="key" data-ins="/">÷</button><button class="key" data-ins="*">×</button><button class="key" data-ins="^2">^2</button>
+        <button class="key" data-ins="4">4</button><button class="key" data-ins="5">5</button><button class="key" data-ins="6">6</button><button class="key" data-ins="-">−</button><button class="key" data-ins="+">+</button><button class="key" data-ins=".">.</button>
+        <button class="key" data-ins="1">1</button><button class="key" data-ins="2">2</button><button class="key" data-ins="3">3</button><button class="key wide" data-ins="0">0</button><button class="key equal" data-act="eval">=</button>
       </div>
-    </main>
 
-    <aside class="sidebar"><div class="card"><div class="ad">Ad space (right)</div></div></aside>
-  </div>
+      <div class="muted" style="margin-top:10px;text-align:center">
+        Tips: use keyboard (0-9, + − × / ^ ( ) . Backspace, Enter). Functions like <code>sin(</code>, <code>ln(</code> auto-insert.
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="card">
+        <h2>How to Use</h2>
+        <ol class="muted">
+          <li>Choose <strong>DEG</strong> or <strong>RAD</strong> for trigonometry.</li>
+          <li>Enter expressions using buttons or your keyboard. Use parentheses for order of operations.</li>
+          <li>Common functions: <code>sin(</code>, <code>cos(</code>, <code>tan(</code>, <code>ln(</code>, <code>log(</code>, <code>√</code>, <code>x^y</code>, <code>n!</code>.</li>
+          <li>Use <strong>MC/MR/M+/M−/MS</strong> to store and recall numbers.</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <h2>Worked Examples</h2>
+        <ul class="muted">
+          <li><strong>Trig (Degrees):</strong> <code>sin(30)</code> → <em>0.5</em> (ensure DEG is selected).</li>
+          <li><strong>Logarithms:</strong> <code>log(1000)</code> → <em>3</em>, <code>ln(e)</code> → <em>1</em>.</li>
+          <li><strong>Powers:</strong> <code>2 ^ 10</code> → <em>1024</em>, <code>10^ 3</code> → <em>1000</em>.</li>
+          <li><strong>Percent:</strong> <code>200 * 15%</code> → <em>30</em>.</li>
+          <li><strong>Factorial:</strong> <code>6!</code> → <em>720</em> (integers ≥ 0 only).</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Formulas & Notes</h2>
+        <p class="muted">Power uses caret: <code>a ^ b</code> (converted to exponentiation). Trig respects angle mode. Percent turns a trailing <code>%</code> into ÷100. Factorial <code>n!</code> is defined for whole, non-negative <code>n</code>.</p>
+        <p class="muted"><em>Educational use only.</em></p>
+      </div>
+
+      <div class="card">
+        <h2>Frequently Asked Questions</h2>
+        <h3>How do I switch between degrees and radians?</h3>
+        <p class="muted">Click DEG or RAD next to the display. Trig and inverse trig use your selection.</p>
+        <h3>Why does <code>^</code> work for powers?</h3>
+        <p class="muted">The UI accepts <code>^</code> and converts it to exponentiation during evaluation.</p>
+        <h3>What does the percent symbol do?</h3>
+        <p class="muted">A trailing <code>%</code> becomes a division by 100 (e.g., <code>15%</code> → <code>0.15</code>).</p>
+        <h3>Can I use factorial on decimals?</h3>
+        <p class="muted">No—<code>n!</code> requires a non-negative integer.</p>
+      </div>
+    </div>
+  </main>
 </div>
 
 <script>
@@ -259,11 +148,9 @@
     if (n < 0 || !Number.isFinite(n) || Math.floor(n) !== n) return NaN;
     let r=1; for(let i=2;i<=n;i++) r*=i; return r;
   }
-
   function preprocessPercent(expr){
     return expr.replace(/(\d+(\.\d+)?)%/g, '($1/100)');
   }
-
   function evaluateExpression(expr){
     let s = expr;
     s = s.replace(/π/g, 'Math.PI');
@@ -272,13 +159,11 @@
     s = s.replace(/√/g, 'Math.sqrt');
     s = s.replace(/10\^/g, '10**');
     s = preprocessPercent(s);
-    s = s.replace(/(\d|\))\s*\(/g, '$1*(');           // implicit multiplication
+    s = s.replace(/(\d|\))\s*\(/g, '$1*(');
     s = s.replace(/\bln\(/g, 'Math.log(');
     s = s.replace(/\blog10\(/g, 'Math.log10(');
     s = s.replace(/\bexp\(/g, 'Math.exp(');
     s = s.replace(/\babs\(/g, 'Math.abs(');
-    s = s.replace(/\bceil\(/g, 'Math.ceil(');
-    s = s.replace(/\bfloor\(/g, 'Math.floor(');
 
     const toRad = angleMode==='DEG';
     const wrapTrig = {
@@ -297,19 +182,16 @@
       });
     }
 
-    // n!  -> fact(n)
     s = s.replace(/(\d+(\.\d+)?|\))!/g, (m)=>{
       return m.endsWith(')!') ? `fact${m.slice(0,-1)}` : `fact(${m.slice(0,-1)})`;
     });
 
     try{
       const fnEval = new Function('Math','fact',`"use strict"; return (${s});`);
-      const out = fnEval(Math, fact);
-      return out;
+      return fnEval(Math, fact);
     }catch(e){ return NaN; }
   }
 
-  // Button logic
   document.querySelectorAll('.key').forEach(btn=>{
     const ins = btn.getAttribute('data-ins');
     const act = btn.getAttribute('data-act');
@@ -344,11 +226,9 @@
     }
   });
 
-  // Angle mode
   degBtn.addEventListener('click', ()=>{ angleMode='DEG'; degBtn.classList.add('active'); radBtn.classList.remove('active'); });
   radBtn.addEventListener('click', ()=>{ angleMode='RAD'; radBtn.classList.add('active'); degBtn.classList.remove('active'); });
 
-  // Keyboard
   document.addEventListener('keydown', (e)=>{
     if (e.ctrlKey || e.metaKey) return;
     const k = e.key;
@@ -363,4 +243,3 @@
 </script>
 </body>
 </html>
-
