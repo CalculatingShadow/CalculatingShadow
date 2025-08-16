@@ -1,172 +1,181 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Online Calculator – Fast & Keyboard‑Friendly</title>
-<meta name="description" content="A clean, centered calculator with quick links to a Position Sizer and Compound Interest tool, plus instructions, examples, and FAQs.">
-
-<!-- Google AdSense (site verification/loader) -->
-<script async
-  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7533964735503056"
-  crossorigin="anonymous"></script>
-
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Professional Calculator Suite | Calculator.ink</title>
+<meta name="description" content="Professional calculator suite: Standard, Scientific, Position Sizer, and Compound Interest tools — fast, accurate, and elegant.">
 <style>
   :root{
     --bg:#0b0d12; --panel:#12151c; --text:#e9eef6; --muted:#8e96a3; --border:#1f2430;
-    --soft:rgba(127,151,255,.12); --accent:#2a6cff; --wrap:1280px;
-    --font:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    --wrap:1180px; --radius:18px; --shadow:0 22px 50px rgba(0,0,0,.35);
+    --font:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+    --cta:#2a6cff; --cta-h:#1f58ff;
   }
-  @media (prefers-color-scheme: light){
-    :root{ --bg:#f4f6fb; --panel:#fff; --text:#0f172a; --muted:#64748b; --border:#e7eaf0; --soft:rgba(31,76,240,.08); --accent:#1f4cf0; }
-  }
-  *{ box-sizing:border-box }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
   body{
-    margin:0; font-family:var(--font); color:var(--text);
+    margin:0; color:var(--text); font:16px/1.6 var(--font);
     background:
-      radial-gradient(1000px 600px at 10% -10%, var(--soft), transparent),
-      radial-gradient(800px 500px at 100% 0%, var(--soft), transparent),
+      radial-gradient(1200px 700px at 100% -10%, rgba(127,151,255,.12), transparent),
+      radial-gradient(1000px 700px at 0% 110%, rgba(138,82,255,.12), transparent),
       var(--bg);
     min-height:100vh;
   }
-  a{ color:inherit; text-decoration:none }
-  .wrap{ max-width:var(--wrap); margin:0 auto; padding:16px 12px; }
-
-  /* Top nav buttons */
-  .topbar{ display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
-  .btn{ display:inline-flex; align-items:center; justify-content:center; padding:10px 14px; border-radius:12px; font-weight:800; border:1px solid var(--border); background:var(--accent); color:#fff; }
-  .btn.secondary{ background:transparent; color:var(--text) }
-
-  /* Layout: ads left/right, center tool */
-  .layout{ display:grid; grid-template-columns: 1fr minmax(320px, 640px) 1fr; gap:16px; align-items:start; }
-  @media (max-width: 980px){ .layout{ grid-template-columns:1fr; } }
-
-  .card{ background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:18px; overflow:visible; }
-  .sidebar{ position:sticky; top:14px; } @media (max-width:980px){ .sidebar{ position:static; } }
-  .ad{ display:block; min-height:250px; border:1px dashed var(--border); border-radius:12px; padding:16px; color:var(--muted); text-align:center; }
-
-  h1{ text-align:center; margin:0 0 6px }
-  .muted{ color:var(--muted) }
-  .small{ font-size:.95rem; text-align:center; margin-bottom:12px }
-  ul,ol{ margin:0 0 8px 18px }
-
-  /* Calculator (unchanged UI) */
-  .calculator{ background:#212427; padding:24px; border-radius:16px; width:100%; max-width:540px; box-shadow:0 25px 60px rgba(0,0,0,.35); margin:0 auto 20px; }
-  .display{ width:100%; height:80px; border:none; background:transparent; color:#fff; text-align:right; font-size:48px; line-height:80px; padding:0 28px 0 20px; margin:0 0 14px 0; }
-  .keys{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
-  .key{ background:#2b2f33; border:none; border-radius:10px; color:#e7e7e7; font-size:20px; height:64px; cursor:pointer; transition:transform .03s, background .15s; }
-  .key:hover{ background:#34393e; } .key:active{ transform:translateY(1px); }
-  .key.equal{ background:#1296db; color:#fff; } .key.equal:hover{ background:#0f86c4; }
+  a{color:inherit; text-decoration:none}
+  /* Header */
+  .nav{position:sticky; top:0; z-index:50; backdrop-filter:blur(10px); background:rgba(11,13,18,.55); border-bottom:1px solid var(--border)}
+  .nav .inner{max-width:var(--wrap); margin:0 auto; padding:14px 16px; display:flex; align-items:center; justify-content:space-between}
+  .brand{font-weight:900; font-size:22px; letter-spacing:.2px}
+  .links{display:flex; gap:18px; flex-wrap:wrap}
+  .links a{padding:8px 10px; border-radius:10px}
+  .links a:hover{background:#161c28}
+  /* Hero */
+  .hero{ padding:78px 16px 64px; text-align:center }
+  .hero .wrap{max-width:var(--wrap); margin:0 auto}
+  .hero h1{font-size:52px; line-height:1.05; margin:0 0 12px}
+  .hero p{max-width:860px; margin:10px auto 22px}
+  .actions{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+  .btn{display:inline-flex; align-items:center; gap:10px; padding:12px 18px; border-radius:12px; font-weight:800; border:1px solid var(--border)}
+  .btn.primary{background:#fff; color:#0b1024}
+  main{max-width:var(--wrap); margin:0 auto; padding:24px 16px 60px}
+  h2{margin:0 0 16px; text-align:center; font-size:28px}
+  /* Cards */
+  .cards{display:grid; gap:18px; grid-template-columns:repeat(3,1fr)}
+  @media (max-width:980px){ .cards{grid-template-columns:1fr} }
+  .card{
+    background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+    padding:22px; box-shadow:var(--shadow); text-align:left;
+  }
+  .card .icon{
+    width:56px; height:56px; border-radius:14px; display:grid; place-items:center; margin-bottom:10px;
+    background:linear-gradient(145deg, rgba(255,255,255,.06), rgba(0,0,0,.06)); border:1px solid var(--border);
+    font-weight:900; letter-spacing:.5px;
+  }
+  .card h3{margin:6px 0}
+  .card p{margin:0; color:var(--muted)}
+  .meta{margin-top:12px; display:flex; justify-content:space-between; align-items:center}
+  .cta{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:10px 14px; border-radius:12px; font-weight:800;
+    background:var(--cta); color:#fff; border:1px solid #1b44c9;
+    transition:background .15s, transform .02s;
+  }
+  .cta:hover{ background:var(--cta-h) }
+  .cta:active{ transform:translateY(1px) }
+  .tag{color:var(--muted)}
+  /* Why + mock */
+  .why{display:grid; grid-template-columns:1.1fr .9fr; gap:22px; margin-top:34px; align-items:start}
+  @media (max-width:980px){ .why{grid-template-columns:1fr} }
+  .bullets{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:22px}
+  .row{display:flex; gap:12px; align-items:flex-start; padding:10px 0}
+  .tick{width:28px; height:28px; border-radius:8px; display:grid; place-items:center; background:rgba(42,108,255,.22); border:1px solid var(--border)}
+  .muted{color:var(--muted)}
+  .mock{display:grid; place-items:center; padding:6px}
+  .calc{
+    width:720px; max-width:100%;
+    background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.04)), #161b24;
+    border:1px solid #283142;
+    border-radius:22px;
+    box-shadow:0 22px 50px rgba(0,0,0,.35);
+    padding:20px;
+  }
+  .keys{display:grid; grid-template-columns:repeat(4, 1fr); gap:14px; margin-bottom:16px}
+  .k{height:60px; border-radius:14px; background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(0,0,0,.06)); border:1px solid #35425a; box-shadow:inset 0 1px 0 rgba(255,255,255,.18), 0 8px 20px rgba(0,0,0,.28); display:flex; align-items:center; justify-content:center}
+  .k span{ color:#e5e9f3; font-weight:800; letter-spacing:.2px }
+  .k.eq{ background:#1296db; border-color:#0f86c4; box-shadow:0 8px 20px rgba(18,150,219,.35) }
+  .display{height:72px; border-radius:16px; background:#0f1321; border:1px solid #1b2436; display:flex; align-items:center; justify-content:flex-end; padding:0 24px; font-weight:900; font-size:32px; color:#22c35e}
+  .center-on-row-2{ grid-column:2 / span 1 }
+  @media (max-width:980px){ .center-on-row-2{ grid-column:auto } }
 </style>
 </head>
 <body>
+<header class="nav">
+  <div class="inner">
+    <div class="brand">CalcHub</div>
+    <nav class="links">
+      <a href="./Scientific-Calculator.html">Scientific</a>
+      <a href="./position-sizer.html">Position Sizer</a>
+      <a href="./Compound-Interest.html">Compound Interest</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
   <div class="wrap">
-    <div class="topbar" role="navigation" aria-label="Quick links">
-      <a class="btn secondary" href="position-sizer.html">Position Sizer</a>
-      <a class="btn secondary" href="Compound-Interest.html">Compound Interest</a>
-     <a class="btn secondary" href="Scientific-Calculator.html">Scientific Calculator</a>
-    </div>
-
-    <h1>Calculator</h1>
-    <p class="small muted">Fast, keyboard‑friendly calculator. </p>
-
-    <div class="layout">
-      <aside class="sidebar"><div class="card"><div class="ad">Ad space (left)</div></div></aside>
-
-      <main class="card" aria-label="Calculator">
-        <div class="calculator" role="application" aria-label="Basic calculator">
-          <input type="text" id="display" class="display" aria-live="polite" disabled value="0">
-          <div class="keys">
-            <button class="key" onclick="appendOp('%')">%</button>
-            <button class="key" onclick="clearEntry()">CE</button>
-            <button class="key" onclick="clearAll()">C</button>
-            <button class="key" onclick="backspace()">⌫</button>
-
-            <button class="key" onclick="reciprocal()">1/x</button>
-            <button class="key" onclick="square()">x²</button>
-            <button class="key" onclick="sqrt()">√x</button>
-            <button class="key" onclick="appendOp('/')">÷</button>
-
-            <button class="key" onclick="appendNum('7')">7</button>
-            <button class="key" onclick="appendNum('8')">8</button>
-            <button class="key" onclick="appendNum('9')">9</button>
-            <button class="key" onclick="appendOp('*')">×</button>
-
-            <button class="key" onclick="appendNum('4')">4</button>
-            <button class="key" onclick="appendNum('5')">5</button>
-            <button class="key" onclick="appendNum('6')">6</button>
-            <button class="key" onclick="appendOp('-')">−</button>
-
-            <button class="key" onclick="appendNum('1')">1</button>
-            <button class="key" onclick="appendNum('2')">2</button>
-            <button class="key" onclick="appendNum('3')">3</button>
-            <button class="key" onclick="appendOp('+')">+</button>
-
-            <button class="key" onclick="toggleSign()">±</button>
-            <button class="key" onclick="appendNum('0')">0</button>
-            <button class="key" onclick="appendNum('.')">.</button>
-            <button class="key equal" onclick="calculate()">=</button>
-          </div>
-        </div>
-
-        <h2>How to Use</h2>
-        <ol>
-          <li>Type numbers on your keyboard or click the buttons.</li>
-          <li>Use CE to clear the current entry and C to reset all.</li>
-          <li>1/x, x², and √x act on the number currently shown.</li>
-          <li>% treats a number as a percent of the value on its left.</li>
-        </ol>
-
-        <h2>Worked Examples</h2>
-        <ul>
-          <li><strong>Discount:</strong> <code>200 − 15 %</code> → <code>170</code></li>
-          <li><strong>Tip:</strong> <code>84.50 × 15 %</code> → <code>12.675</code></li>
-          <li><strong>Square root:</strong> <code>√(196)</code> → <code>14</code></li>
-        </ul>
-
-        <h2>FAQ</h2>
-        <h3>Why does my phone show different results?</h3>
-        <p class="small">Percent handling varies across calculators. This one uses “percent of the left value” and standard operator precedence.</p>
-        <h3>Is it OK for finance?</h3>
-        <p class="small">Good for arithmetic, but doesn’t include fees/taxes. Use dedicated calculators for loans/investing.</p>
-        <p class="muted small"><em>Educational use only.</em></p>
-      </main>
-
-      <aside class="sidebar"><div class="card"><div class="ad">Ad space (right)</div></div></aside>
+    <h1>Professional<br>Calculator Suite</h1>
+    <p>Powerful calculation tools for every need. From basic arithmetic to advanced scientific functions and professional trading position sizing. All your mathematical needs in one elegant platform.</p>
+    <div class="actions">
+      <a class="btn primary" href="#choose">Start Calculating</a>
     </div>
   </div>
+</section>
 
-<script>
-  // Calculator JS
-  let display = document.getElementById("display");
-  let currentValue = "0"; let resetNext = false;
+<main>
+  <h2 id="choose">Choose Your Calculator</h2>
 
-  function updateDisplay(){ display.value = currentValue; }
-  function appendNum(n){ if (resetNext){ currentValue=n; resetNext=false; } else { currentValue = currentValue==="0"? n : currentValue+n; } updateDisplay(); }
-  function appendOp(op){ if (!isNaN(currentValue.slice(-1))) { currentValue += op; resetNext=false; updateDisplay(); } }
-  function clearEntry(){ currentValue="0"; updateDisplay(); }
-  function clearAll(){ currentValue="0"; updateDisplay(); }
-  function backspace(){ currentValue = currentValue.length>1? currentValue.slice(0,-1) : "0"; updateDisplay(); }
-  function reciprocal(){ currentValue = (1/parseFloat(currentValue||"1")).toString(); updateDisplay(); }
-  function square(){ currentValue = Math.pow(parseFloat(currentValue||"0"),2).toString(); updateDisplay(); }
-  function sqrt(){ currentValue = Math.sqrt(parseFloat(currentValue||"0")).toString(); updateDisplay(); }
-  function toggleSign(){ currentValue = (parseFloat(currentValue||"0")*-1).toString(); updateDisplay(); }
-  function calculate(){ try{ currentValue = eval(currentValue.replace(/÷/g,"/").replace(/×/g,"*")).toString(); } catch{ currentValue="Error"; } updateDisplay(); resetNext=true; }
+  <div class="cards">
+    <article class="card">
+      <div class="icon">▣</div>
+      <h3>Standard Calculator</h3>
+      <p>Clean, intuitive interface for everyday arithmetic operations. Perfect for quick calculations with a familiar layout and responsive design.</p>
+      <div class="meta">
+        <a class="cta" href="./Calculator.html">Try Now →</a>
+        <span class="tag">Basic Operations</span>
+      </div>
+    </article>
 
-  document.addEventListener("keydown", e=>{
-    if (!isNaN(e.key)) appendNum(e.key);
-    else if (["+", "-", "*", "/", "%"].includes(e.key)) appendOp(e.key);
-    else if (e.key === ".") appendNum(".");
-    else if (e.key === "Enter" || e.key === "=") calculate();
-    else if (e.key === "Backspace") backspace();
-    else if (e.key.toLowerCase() === "c" && !e.ctrlKey) clearAll();
-    else if (e.key === "Escape") clearAll();
-  });
-</script>
+    <article class="card" style="background:linear-gradient(180deg, rgba(138,82,255,.08), transparent), var(--panel);">
+      <div class="icon">⌗</div>
+      <h3>Scientific Calculator</h3>
+      <p>Advanced mathematical functions including trigonometry, logarithms, memory operations, and scientific notation for complex calculations.</p>
+      <div class="meta">
+        <a class="cta" href="./Scientific-Calculator.html">Try Now →</a>
+        <span class="tag">Advanced Functions</span>
+      </div>
+    </article>
+
+    <article class="card" style="background:linear-gradient(180deg, rgba(31,191,116,.08), transparent), var(--panel);">
+      <div class="icon">⋔</div>
+      <h3>Position Sizer</h3>
+      <p>Professional trading tool for calculating optimal position sizes based on risk management parameters and account protection strategies.</p>
+      <div class="meta">
+        <a class="cta" href="./position-sizer.html">Try Now →</a>
+        <span class="tag">Trading Tool</span>
+      </div>
+    </article>
+
+    <article class="card center-on-row-2" style="background:linear-gradient(180deg, rgba(32,139,230,.10), transparent), var(--panel);">
+      <div class="icon">⟲</div>
+      <h3>Compound Interest</h3>
+      <p>Project how savings and investments grow over time with compounding and optional monthly contributions.</p>
+      <div class="meta">
+        <a class="cta" href="./Compound-Interest.html">Try Now →</a>
+        <span class="tag">Planner</span>
+      </div>
+    </article>
+  </div>
+
+  <section class="why">
+    <div class="bullets">
+      <h2 style="text-align:left">Why Choose CalcHub?</h2>
+      <div class="row"><div class="tick">✓</div><div><h3 style="margin:0 0 4px">Precision Calculations</h3><p class="muted">High-precision arithmetic with proper handling of floating-point operations.</p></div></div>
+      <div class="row"><div class="tick">✓</div><div><h3 style="margin:0 0 4px">Responsive Design</h3><p class="muted">Works seamlessly across desktop, tablet, and mobile devices.</p></div></div>
+      <div class="row"><div class="tick">✓</div><div><h3 style="margin:0 0 4px">Professional Tools</h3><p class="muted">Advanced features for scientific computing and financial calculations.</p></div></div>
+    </div>
+
+    <aside class="mock" aria-hidden="true">
+      <div class="calc">
+        <div class="keys">
+          <div class="k"><span>C</span></div><div class="k"><span>÷</span></div><div class="k"><span>×</span></div><div class="k"><span>⌫</span></div>
+          <div class="k"><span>7</span></div><div class="k"><span>8</span></div><div class="k"><span>9</span></div><div class="k"><span>−</span></div>
+          <div class="k"><span>4</span></div><div class="k"><span>5</span></div><div class="k"><span>6</span></div><div class="k"><span>+</span></div>
+          <div class="k"><span>1</span></div><div class="k"><span>2</span></div><div class="k"><span>3</span></div><div class="k eq"><span>=</span></div>
+        </div>
+        <div class="display">123,456.78</div>
+      </div>
+    </aside>
+  </section>
+</main>
 </body>
 </html>
-
-
-
-
