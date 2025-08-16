@@ -1,342 +1,227 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Compound Interest Calculator – Free Online Tool with Examples & FAQ</title>
-  <meta name="description" content="Use this free compound interest calculator to estimate investment growth with monthly or annual compounding. Includes step‑by‑step guide, worked examples, and FAQs." />
-  <link rel="canonical" href="https://example.com/tools/compound-interest-calculator" />
-
-  <!-- Google AdSense (site verification/loader) -->
-<script async
-  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7533964735503056"
-  crossorigin="anonymous"></script>
-
-  <style>
-    :root{
-      --bg:#0b0d12; --panel:#12151c; --text:#e9eef6; --muted:#8e96a3; --border:#1f2430;
-      --soft:rgba(127,151,255,.12); --accent:#2a6cff; --wrap:1280px;
-      --font:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-    }
-    @media (prefers-color-scheme: light){
-      :root{ --bg:#f4f6fb; --panel:#ffffff; --text:#0f172a; --muted:#64748b; --border:#e7eaf0; --soft:rgba(31,76,240,.08); --accent:#1f4cf0; }
-    }
-
-    *{ box-sizing:border-box }
-    body{
-      margin:0; font-family:var(--font); color:var(--text);
-      background:
-        radial-gradient(1000px 600px at 10% -10%, var(--soft), transparent),
-        radial-gradient(800px 500px at 100% 0%, var(--soft), transparent),
-        var(--bg);
-      min-height:100vh;
-    }
-    a{ color:inherit; text-decoration:none }
-    .wrap{ max-width:var(--wrap); margin:0 auto; padding:16px 12px; }
-
-    /* Top nav buttons (match other pages) */
-    .topbar{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
-    .btn{ display:inline-flex; align-items:center; justify-content:center; padding:10px 14px; border-radius:12px; font-weight:800; border:1px solid var(--border); background:var(--accent); color:#fff; }
-    .btn.secondary{ background:transparent; color:var(--text) }
-
-    /* Layout: ads left/right, tool centered */
-    .layout{ display:grid; grid-template-columns:1fr minmax(320px, 860px) 1fr; gap:16px; align-items:start; }
-    @media (max-width:980px){ .layout{ grid-template-columns:1fr; } }
-
-    .card{ background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:18px; overflow:visible; }
-    .sidebar{ position:sticky; top:14px; } @media (max-width:980px){ .sidebar{ position:static; } }
-    .ad{ display:block; min-height:250px; border:1px dashed var(--border); border-radius:12px; padding:16px; color:var(--muted); text-align:center; }
-
-    h1,h2,h3{ line-height:1.25; margin:0 0 10px }
-    .muted{ color:var(--muted) }
-    .small{ font-size:.95rem }
-
-    /* Form styles (adapted to theme) */
-    form .row{ display:grid; grid-template-columns:1fr; gap:.75rem; margin-bottom:.75rem; }
-    @media (min-width:600px){ form .row{ grid-template-columns:1fr 1fr; } }
-    label{ display:block; font-weight:700; margin-bottom:.25rem; }
-    input, select{
-      width:100%; padding:.7rem .75rem; border:1px solid var(--border); border-radius:10px;
-      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.02)); color:var(--text); font:inherit;
-      min-height:48px;
-    }
-    select option{ color:#0f172a; background:#ffffff; }
-    @media (prefers-color-scheme: dark){
-      select option{ color:#e9eef6; background:#0f1220; }
-    }
-    input:focus, select:focus{ outline:3px solid rgba(122,162,255,.35); outline-offset:2px; border-color:#7aa2ff; }
-
-    .actions{ display:flex; gap:.5rem; flex-wrap:wrap; }
-    button{ cursor:pointer; border:1px solid var(--border); padding:.7rem 1rem; border-radius:10px; font-weight:800; }
-    .primary{ background:var(--accent); color:#fff; }
-    .ghost{ background:transparent; color:var(--text); }
-
-    .result{ font-size:1.05rem; border-top:1px dashed var(--border); margin-top:1rem; padding-top:1rem; }
-    .grid-3{ display:grid; grid-template-columns:1fr; gap:.75rem; }
-    @media (min-width:700px){ .grid-3{ grid-template-columns:repeat(3,1fr); } }
-    .metric{ background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.02)); border:1px solid var(--border); border-radius:12px; padding:.75rem; }
-    .metric b{ display:block; font-size:.9rem; color:var(--muted); }
-    .metric span{ font-size:1.15rem; font-weight:800; }
-
-    table{ width:100%; border-collapse:collapse; background:transparent; }
-    th, td{ padding:.6rem .5rem; border-bottom:1px solid var(--border); text-align:right; }
-    th:first-child, td:first-child{ text-align:left; }
-    aside .card + .card{ margin-top:1rem; }
-
-    footer{ border-top:1px solid var(--border); }
-  </style>
-
-  <!-- FAQ & Application structured data -->
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@graph":[
-      {
-        "@type":"WebApplication",
-        "name":"Compound Interest Calculator",
-        "applicationCategory":"FinanceApplication",
-        "operatingSystem":"Web",
-        "url":"https://example.com/tools/compound-interest-calculator",
-        "description":"Free calculator to estimate investment growth with compound interest and optional monthly contributions."
-      },
-      {
-        "@type":"FAQPage",
-        "mainEntity":[
-          {"@type":"Question","name":"What is compound interest?","acceptedAnswer":{"@type":"Answer","text":"Compound interest is interest earned on your initial principal plus any interest that has already been added to it."}},
-          {"@type":"Question","name":"How accurate is this calculator?","acceptedAnswer":{"@type":"Answer","text":"Results assume fixed rates and regular compounding. Real‑world returns can vary due to fees, taxes, and market changes."}},
-          {"@type":"Question","name":"What compounding frequency should I choose?","acceptedAnswer":{"@type":"Answer","text":"Banks commonly use monthly compounding. For theoretical comparisons, annual compounding is fine. The more frequent the compounding, the slightly higher the growth."}}
-        ]
-      }
-    ]
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Compound Interest Calculator – Free Online Tool with Examples & FAQ</title>
+<meta name="description" content="Use this free compound interest calculator to estimate investment growth with monthly or annual compounding. Includes step-by-step guide, worked examples, and FAQs.">
+<style>
+  :root{
+    --bg:#0b0d12; --panel:#12151c; --text:#e9eef6; --muted:#8e96a3; --border:#1f2430;
+    --soft:rgba(127,151,255,.12); --accent:#2a6cff; --wrap:1180px;
+    --font:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
   }
-  </script>
+  *{box-sizing:border-box}
+  body{margin:0; font-family:var(--font); color:var(--text); background:radial-gradient(1000px 600px at 10% -10%, var(--soft), transparent), radial-gradient(800px 500px at 100% 110%, var(--soft), transparent), var(--bg)}
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:var(--wrap); margin:0 auto; padding:18px 16px}
+  .pills{display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin:8px 0 18px}
+  .pill{padding:10px 16px; border-radius:999px; border:1px solid var(--border); background:rgba(255,255,255,.02); font-weight:800}
+  .pill:hover{background:rgba(255,255,255,.05)}
+  .pill.active{background:var(--accent); color:#fff; border-color:transparent; box-shadow:0 8px 22px rgba(42,108,255,.35)}
+  .card{ background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:18px; max-width:980px; margin:0 auto }
+  h1,h2,h3{ line-height:1.25; margin:0 0 10px } .muted{ color:var(--muted) } .small{ font-size:.95rem }
+  form .row{ display:grid; grid-template-columns:1fr; gap:.75rem; margin-bottom:.75rem } @media (min-width:600px){ form .row{ grid-template-columns:1fr 1fr } }
+  label{ display:block; font-weight:700; margin-bottom:.25rem }
+  input, select{ width:100%; padding:.7rem .75rem; border:1px solid var(--border); border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.02)); color:var(--text); font:inherit; min-height:48px }
+  select option{ color:#0f172a; background:#fff } @media (prefers-color-scheme: dark){ select option{ color:#e9eef6; background:#0f1220 } }
+  .actions{ display:flex; gap:.5rem; flex-wrap:wrap }
+  button{ cursor:pointer; border:1px solid var(--border); padding:.7rem 1rem; border-radius:10px; font-weight:800 }
+  .primary{ background:var(--accent); color:#fff } .ghost{ background:transparent; color:var(--text) }
+  .result{ font-size:1.05rem; border-top:1px dashed var(--border); margin-top:1rem; padding-top:1rem }
+  .grid-3{ display:grid; grid-template-columns:1fr; gap:.75rem } @media (min-width:700px){ .grid-3{ grid-template-columns:repeat(3,1fr) } }
+  .metric{ background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.02)); border:1px solid var(--border); border-radius:12px; padding:.75rem }
+  .metric b{ display:block; font-size:.9rem; color:var(--muted) }
+  .metric span{ font-size:1.15rem; font-weight:800 }
+  table{ width:100%; border-collapse:collapse; background:transparent }
+  th, td{ padding:.6rem .5rem; border-bottom:1px solid var(--border); text-align:right }
+  th:first-child, td:first-child{ text-align:left }
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+  {"@type":"WebApplication","name":"Compound Interest Calculator","applicationCategory":"FinanceApplication","operatingSystem":"Web","url":"https://calculator.ink/Compound-Interest.html","description":"Free calculator to estimate investment growth with compound interest and optional monthly contributions."},
+  {"@type":"FAQPage","mainEntity":[
+    {"@type":"Question","name":"What is compound interest?","acceptedAnswer":{"@type":"Answer","text":"Compound interest is interest earned on your initial principal plus any interest that has already been added to it."}},
+    {"@type":"Question","name":"How accurate is this calculator?","acceptedAnswer":{"@type":"Answer","text":"Results assume fixed rates and regular compounding. Real-world returns can vary due to fees, taxes, and market changes."}},
+    {"@type":"Question","name":"What compounding frequency should I choose?","acceptedAnswer":{"@type":"Answer","text":"Banks commonly use monthly compounding. For theoretical comparisons, annual compounding is fine. The more frequent the compounding, the slightly higher the growth."}}
+  ]}
+]}
+</script>
 </head>
-
 <body>
-  <div class="wrap">
-    <!-- Top nav to match other tools -->
-    <div class="topbar" role="navigation" aria-label="Quick links">
-      <a class="btn secondary" href="index.html">Calculator</a>
-      <a class="btn secondary" href="position-sizer.html">Position Sizer</a>
-      <a class="btn secondary" href="Scientific-Calculator.html">Scientific Calculator</a>
-    </div>
+<div class="wrap">
+  <nav class="pills" aria-label="Primary">
+    <a class="pill" href="index.html">Home</a>
+    <a class="pill" href="Calculator.html">Standard</a>
+    <a class="pill" href="Scientific-Calculator.html">Scientific</a>
+    <a class="pill" href="position-sizer.html">Position Sizer</a>
+    <a class="pill active" href="Compound-Interest.html" aria-current="page">Compound Interest</a>
+  </nav>
 
-    <h1 style="text-align:center">Compound Interest Calculator</h1>
-    <p class="muted small" style="text-align:center">Estimate how your savings or investments could grow over time. Below you’ll find a guide, worked examples, and FAQs.</p>
+  <h1 style="text-align:center">Compound Interest Calculator</h1>
+  <p class="muted small" style="text-align:center">Estimate how your savings or investments could grow over time. Below you’ll find a guide, worked examples, and FAQs.</p>
 
-    <div class="layout">
-      <!-- Left ad -->
-      <aside class="sidebar">
-        <div class="card"><div class="ad" aria-label="Advertisement placeholder">Ad space (left)</div></div>
-      </aside>
-
-      <!-- Center column -->
-      <main class="card">
-        <!-- AD PLACEHOLDER (top of main column) -->
-        <div class="ad" aria-label="Advertisement placeholder">Ad space</div>
-
-        <section aria-labelledby="calc-title">
-          <h2 id="calc-title">Use the Calculator</h2>
-          <form id="calc" novalidate>
-            <div class="row">
-              <div>
-                <label for="principal">Initial amount ($)</label>
-                <input id="principal" name="principal" type="number" inputmode="decimal" min="0" step="0.01" placeholder="e.g., 5000" required />
-              </div>
-              <div>
-                <label for="rate">Annual interest rate (%)</label>
-                <input id="rate" name="rate" type="number" inputmode="decimal" min="0" step="0.01" placeholder="e.g., 6.5" required />
-              </div>
-            </div>
-            <div class="row">
-              <div>
-                <label for="years">Years</label>
-                <input id="years" name="years" type="number" inputmode="decimal" min="0" step="0.1" placeholder="e.g., 10" required />
-              </div>
-              <div>
-                <label for="freq">Compounding</label>
-                <select id="freq" name="freq">
-                  <option value="1">Annually</option>
-                  <option value="2">Semi‑annually</option>
-                  <option value="4">Quarterly</option>
-                  <option value="12" selected>Monthly</option>
-                  <option value="365">Daily</option>
-                </select>
-              </div>
-            </div>
-            <div class="row">
-              <div>
-                <label for="contrib">Monthly contribution ($)</label>
-                <input id="contrib" name="contrib" type="number" inputmode="decimal" min="0" step="0.01" placeholder="e.g., 150" />
-              </div>
-              <div>
-                <label for="start">Start in</label>
-                <select id="start" name="start">
-                  <option value="0" selected>This month</option>
-                  <option value="1">Next month</option>
-                </select>
-              </div>
-            </div>
-            <div class="actions">
-              <button type="button" class="primary" id="compute">Calculate</button>
-              <button type="reset" class="ghost" id="reset">Reset</button>
-            </div>
-          </form>
-
-          <div class="result" aria-live="polite" id="summary" hidden>
-            <div class="grid-3">
-              <div class="metric"><b>Final balance</b><span id="out-balance">$0.00</span></div>
-              <div class="metric"><b>Total contributions</b><span id="out-contrib">$0.00</span></div>
-              <div class="metric"><b>Total interest</b><span id="out-interest">$0.00</span></div>
-            </div>
-            <p class="small muted">This is an estimate for educational purposes only. Actual results vary with fees, taxes, and changing rates.</p>
+  <main class="card">
+    <section aria-labelledby="calc-title">
+      <h2 id="calc-title">Use the Calculator</h2>
+      <form id="calc" novalidate>
+        <div class="row">
+          <div><label for="principal">Initial amount ($)</label><input id="principal" name="principal" type="number" inputmode="decimal" min="0" step="0.01" placeholder="e.g., 5000" required /></div>
+          <div><label for="rate">Annual interest rate (%)</label><input id="rate" name="rate" type="number" inputmode="decimal" min="0" step="0.01" placeholder="e.g., 6.5" required /></div>
+        </div>
+        <div class="row">
+          <div><label for="years">Years</label><input id="years" name="years" type="number" inputmode="decimal" min="0" step="0.1" placeholder="e.g., 10" required /></div>
+          <div><label for="freq">Compounding</label>
+            <select id="freq" name="freq"><option value="1">Annually</option><option value="2">Semi-annually</option><option value="4">Quarterly</option><option value="12" selected>Monthly</option><option value="365">Daily</option></select>
           </div>
-
-          <div class="card" id="table-wrap" hidden>
-            <h3>Year‑by‑Year Growth</h3>
-            <div style="overflow:auto">
-              <table id="schedule" aria-describedby="schedule-desc">
-                <thead>
-                  <tr><th>Year</th><th>End Balance ($)</th><th>Contributed ($)</th><th>Interest Earned ($)</th></tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-            <p id="schedule-desc" class="small muted">Balances assume regular compounding and even monthly contributions.</p>
+        </div>
+        <div class="row">
+          <div><label for="contrib">Monthly contribution ($)</label><input id="contrib" name="contrib" type="number" inputmode="decimal" min="0" step="0.01" placeholder="e.g., 150" /></div>
+          <div><label for="start">Start in</label>
+            <select id="start" name="start"><option value="0" selected>This month</option><option value="1">Next month</option></select>
           </div>
-        </section>
+        </div>
+        <div class="actions">
+          <button type="button" class="primary" id="compute">Calculate</button>
+          <button type="reset" class="ghost" id="reset">Reset</button>
+        </div>
+      </form>
 
-        <section class="card" style="margin-top:14px">
-          <h2>How to Use This Tool</h2>
-          <ol class="small">
-            <li>Enter your <strong>initial amount</strong>, annual rate, and number of years.</li>
-            <li>Choose a <strong>compounding frequency</strong>. Monthly is common for bank accounts.</li>
-            <li>Optionally add a <strong>monthly contribution</strong> to see the impact of regular saving.</li>
-            <li>Press <strong>Calculate</strong> to view the projected balance, total contributions, and interest.</li>
-          </ol>
-          <p class="small">Formula used: for principal \(P\), rate \(r\) (as a decimal), compounding periods \(n\) per year, time \(t\) in years, monthly contribution \(C\):</p>
-          <p class="small"><em>Without contributions:</em> \(A = P(1+\frac{r}{n})^{nt}\). <br>
-          <em>With monthly contributions:</em> \(A = P(1+\frac{r}{n})^{nt} + C \cdot \frac{(1+\frac{r}{n})^{nt} - (1+\frac{r}{n})^{nt - m_{start}}}{(1+\frac{r}{n})^{n/12}-1}\).</p>
-        </section>
+      <div class="result" aria-live="polite" id="summary" hidden>
+        <div class="grid-3">
+          <div class="metric"><b>Final balance</b><span id="out-balance">$0.00</span></div>
+          <div class="metric"><b>Total contributions</b><span id="out-contrib">$0.00</span></div>
+          <div class="metric"><b>Total interest</b><span id="out-interest">$0.00</span></div>
+        </div>
+        <p class="small muted">This is an estimate for educational purposes only. Actual results vary with fees, taxes, and changing rates.</p>
+      </div>
 
-        <section class="card" style="margin-top:14px">
-          <h2>Worked Examples</h2>
-          <p class="small"><strong>Example 1:</strong> $5,000 at 6% for 10 years, monthly compounding, no contributions → about <em>$8,983</em>.</p>
-          <p class="small"><strong>Example 2:</strong> $1,000 at 5% for 20 years with $100/mo → about <em>$41,000+</em>.</p>
-          <p class="small">These examples show how time and steady contributions accelerate growth thanks to compounding.</p>
-        </section>
+      <div class="card" id="table-wrap" hidden style="margin-top:12px">
+        <h3>Year-by-Year Growth</h3>
+        <div style="overflow:auto">
+          <table id="schedule" aria-describedby="schedule-desc">
+            <thead><tr><th>Year</th><th>End Balance ($)</th><th>Contributed ($)</th><th>Interest Earned ($)</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p id="schedule-desc" class="small muted">Balances assume regular compounding and even monthly contributions.</p>
+      </div>
+    </section>
 
-        <section class="card" style="margin-top:14px">
-          <h2>Frequently Asked Questions</h2>
-          <h3>What is compound interest?</h3>
-          <p class="small">It’s interest on both your original money and the interest that’s been added before.</p>
-          <h3>Which compounding option should I pick?</h3>
-          <p class="small">Monthly is typical for savings accounts and loans. Annual is fine for quick estimates. Daily yields only a tiny bit more than monthly at normal rates.</p>
-          <h3>Is the result guaranteed?</h3>
-          <p class="small">No. This is an educational tool and ignores market volatility, fees, taxes, and rate changes.</p>
-        </section>
-      </main>
+    <section class="card" style="margin-top:14px">
+      <h2>How to Use This Tool</h2>
+      <ol class="small">
+        <li>Enter your <strong>initial amount</strong>, annual rate, and number of years.</li>
+        <li>Choose a <strong>compounding frequency</strong>. Monthly is common for bank accounts.</li>
+        <li>Optionally add a <strong>monthly contribution</strong> to see the impact of regular saving.</li>
+        <li>Press <strong>Calculate</strong> to view the projected balance, total contributions, and interest.</li>
+      </ol>
+      <p class="small">Formula used: for principal \(P\), rate \(r\) (as a decimal), compounding periods \(n\) per year, time \(t\) in years, monthly contribution \(C\):</p>
+      <p class="small"><em>Without contributions:</em> \(A = P(1+\frac{r}{n})^{nt}\). <br>
+      <em>With monthly contributions:</em> \(A = P(1+\frac{r}{n})^{nt} + C \cdot \frac{(1+\frac{r}{n})^{nt} - (1+\frac{r}{n})^{nt - m_{start}}}{(1+\frac{r}{n})^{n/12}-1}\).</p>
+    </section>
 
-      <!-- Right ad -->
-      <aside class="sidebar">
-        <div class="card"><div class="ad" aria-label="Advertisement placeholder">Ad space (right)</div></div>
-      </aside>
-    </div>
-  </div>
+    <section class="card" style="margin-top:14px">
+      <h2>Worked Examples</h2>
+      <p class="small"><strong>Example 1:</strong> $5,000 at 6% for 10 years, monthly compounding, no contributions → about <em>$8,983</em>.</p>
+      <p class="small"><strong>Example 2:</strong> $1,000 at 5% for 20 years with $100/mo → about <em>$41,000+</em>.</p>
+      <p class="small">These examples show how time and steady contributions accelerate growth thanks to compounding.</p>
+    </section>
 
-  <footer>
-    <div class="wrap small muted">
-      <p><strong>Educational use only.</strong> This page provides helpful, original content alongside the tool to comply with advertising program policies.</p>
-    </div>
-  </footer>
+    <section class="card" style="margin-top:14px">
+      <h2>Frequently Asked Questions</h2>
+      <h3>What is compound interest?</h3>
+      <p class="small">It’s interest on both your original money and the interest that’s been added before.</p>
+      <h3>Which compounding option should I pick?</h3>
+      <p class="small">Monthly is typical for savings accounts and loans. Annual is fine for quick estimates. Daily yields only a tiny bit more than monthly at normal rates.</p>
+      <h3>Is the result guaranteed?</h3>
+      <p class="small">No. This is an educational tool and ignores market volatility, fees, taxes, and rate changes.</p>
+    </section>
+  </main>
+</div>
 
-  <script>
-    // Utility: currency formatting
-    const fmt = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
+<script>
+  const fmt = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
 
-    function computeFV({ P, r, n, t, C, startNow }) {
-      const i = r / n;
-      const periods = Math.round(n * t);
-      let fvPrincipal = P * Math.pow(1 + i, periods);
+  function computeFV({ P, r, n, t, C, startNow }) {
+    const i = r / n;
+    const periods = Math.round(n * t);
+    let fvPrincipal = P * Math.pow(1 + i, periods);
 
-      const perPeriodContrib = C * 12 / n;
-      const shift = startNow ? 0 : 1;
-      let fvContrib = 0;
+    const perPeriodContrib = C * 12 / n;
+    const shift = startNow ? 0 : 1;
+    let fvContrib = 0;
 
-      if (perPeriodContrib > 0 && i > 0) {
-        const effectivePeriods = periods - Math.round(n/12)*shift;
-        const growth = Math.pow(1 + i, effectivePeriods);
-        fvContrib = perPeriodContrib * (growth - 1) / i;
-        fvContrib *= Math.pow(1 + i, Math.round(n/12)*shift);
-      } else if (perPeriodContrib > 0 && i === 0) {
-        fvContrib = perPeriodContrib * (periods - Math.round(n/12)*shift);
-      }
-
-      const fv = fvPrincipal + fvContrib;
-      const totalContrib = P + C * 12 * t;
-      const interest = fv - totalContrib;
-
-      return { fv, interest, totalContrib, fvPrincipal, fvContrib, periods, i, n, t };
+    if (perPeriodContrib > 0 && i > 0) {
+      const effectivePeriods = periods - Math.round(n/12)*shift;
+      const growth = Math.pow(1 + i, effectivePeriods);
+      fvContrib = perPeriodContrib * (growth - 1) / i;
+      fvContrib *= Math.pow(1 + i, Math.round(n/12)*shift);
+    } else if (perPeriodContrib > 0 && i === 0) {
+      fvContrib = perPeriodContrib * (periods - Math.round(n/12)*shift);
     }
 
-    function scheduleByYear(params) {
-      const rows = [];
-      let balance = params.P;
-      const months = Math.round(12 * params.t);
-      const rateMonthly = params.r / 12;
-      const startOffset = params.startNow ? 0 : 1;
+    const fv = fvPrincipal + fvContrib;
+    const totalContrib = P + C * 12 * t;
+    const interest = fv - totalContrib;
 
-      for (let m = 1; m <= months; m++) {
-        balance *= (1 + rateMonthly);
-        if (!(m <= startOffset)) balance += params.C;
-        if (m % 12 === 0) {
-          const year = m / 12;
-          const contributed = params.P + params.C * (m - startOffset < 0 ? 0 : m - startOffset);
-          const interest = balance - contributed;
-          rows.push({ year, balance, contributed, interest });
-        }
+    return { fv, interest, totalContrib, periods };
+  }
+
+  function scheduleByYear(params) {
+    const rows = [];
+    let balance = params.P;
+    const months = Math.round(12 * params.t);
+    const rateMonthly = params.r / 12;
+    const startOffset = params.startNow ? 0 : 1;
+
+    for (let m = 1; m <= months; m++) {
+      balance *= (1 + rateMonthly);
+      if (!(m <= startOffset)) balance += params.C;
+      if (m % 12 === 0) {
+        const year = m / 12;
+        const contributed = params.P + params.C * (m - startOffset < 0 ? 0 : m - startOffset);
+        const interest = balance - contributed;
+        rows.push({ year, balance, contributed, interest });
       }
-      return rows;
     }
+    return rows;
+  }
 
-    function $(id){ return document.getElementById(id); }
+  function $(id){ return document.getElementById(id); }
 
-    $('compute').addEventListener('click', () => {
-      const P = Math.max(0, parseFloat($('principal').value || 0));
-      const r = Math.max(0, parseFloat($('rate').value || 0)) / 100;
-      const t = Math.max(0, parseFloat($('years').value || 0));
-      const n = parseInt($('freq').value, 10);
-      const C = Math.max(0, parseFloat($('contrib').value || 0));
-      const startNow = $('start').value === '0';
+  $('compute').addEventListener('click', () => {
+    const P = Math.max(0, parseFloat($('principal').value || 0));
+    const r = Math.max(0, parseFloat($('rate').value || 0)) / 100;
+    const t = Math.max(0, parseFloat($('years').value || 0));
+    const n = parseInt($('freq').value, 10);
+    const C = Math.max(0, parseFloat($('contrib').value || 0));
+    const startNow = $('start').value === '0';
 
-      if (!isFinite(P) || !isFinite(r) || !isFinite(t)) return;
+    if (!isFinite(P) || !isFinite(r) || !isFinite(t)) return;
 
-      const res = computeFV({ P, r, n, t, C, startNow });
+    const res = computeFV({ P, r, n, t, C, startNow });
 
-      $('summary').hidden = false;
-      $('out-balance').textContent  = fmt.format(res.fv);
-      $('out-contrib').textContent  = fmt.format(P + C * 12 * t);
-      $('out-interest').textContent = fmt.format(res.interest);
+    $('summary').hidden = false;
+    $('out-balance').textContent  = fmt.format(res.fv);
+    $('out-contrib').textContent  = fmt.format(P + C * 12 * t);
+    $('out-interest').textContent = fmt.format(res.interest);
 
-      const rows = scheduleByYear({ P, r, t, C, startNow });
-      const tbody = $('schedule').querySelector('tbody');
-      tbody.innerHTML = '';
-      rows.forEach(rw => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${rw.year}</td>
-          <td>${fmt.format(rw.balance)}</td>
-          <td>${fmt.format(rw.contributed)}</td>
-          <td>${fmt.format(rw.interest)}</td>`;
-        tbody.appendChild(tr);
-      });
-      $('table-wrap').hidden = rows.length === 0;
+    const rows = scheduleByYear({ P, r, t, C, startNow });
+    const tbody = $('schedule').querySelector('tbody');
+    tbody.innerHTML = '';
+    rows.forEach(rw => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${rw.year}</td><td>${fmt.format(rw.balance)}</td><td>${fmt.format(rw.contributed)}</td><td>${fmt.format(rw.interest)}</td>`;
+      tbody.appendChild(tr);
     });
+    $('table-wrap').hidden = rows.length === 0;
+  });
 
-    $('reset').addEventListener('click', () => {
-      $('summary').hidden = true;
-      $('table-wrap').hidden = true;
-    });
-  </script>
+  $('reset').addEventListener('click', () => {
+    $('summary').hidden = true;
+    $('table-wrap').hidden = true;
+  });
+</script>
 </body>
 </html>
