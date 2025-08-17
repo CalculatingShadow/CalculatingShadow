@@ -5,12 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Compound Interest Calculator – Free Online Tool with Examples & FAQ</title>
 <meta name="description" content="Use this free compound interest calculator to estimate investment growth with monthly or annual compounding. Includes step-by-step guide, worked examples, and FAQs.">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7533964735503056" crossorigin="anonymous"></script>
 <style>
-  :root{
-    --bg:#0b0d12; --panel:#12151c; --text:#e9eef6; --muted:#8e96a3; --border:#1f2430;
-    --soft:rgba(127,151,255,.12); --accent:#2a6cff; --wrap:1180px;
-    --font:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
-  }
+  :root{--bg:#0b0d12; --panel:#12151c; --text:#e9eef6; --muted:#8e96a3; --border:#1f2430; --soft:rgba(127,151,255,.12); --accent:#2a6cff; --wrap:1180px; --font:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial}
   *{box-sizing:border-box}
   body{margin:0; font-family:var(--font); color:var(--text); background:radial-gradient(1000px 600px at 10% -10%, var(--soft), transparent), radial-gradient(800px 500px at 100% 110%, var(--soft), transparent), var(--bg)}
   a{color:inherit; text-decoration:none}
@@ -36,6 +33,9 @@
   table{ width:100%; border-collapse:collapse; background:transparent }
   th, td{ padding:.6rem .5rem; border-bottom:1px solid var(--border); text-align:right }
   th:first-child, td:first-child{ text-align:left }
+  footer{border-top:1px solid var(--border); margin-top:40px}
+  .foot{max-width:var(--wrap); margin:0 auto; padding:16px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between}
+  .foot a{color:var(--muted)}
 </style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
@@ -140,56 +140,32 @@
   </main>
 </div>
 
+<footer>
+  <div class="foot">
+    <small class="muted">© <span id="y"></span> Calculator.ink — Educational use only.</small>
+    <nav style="display:flex; gap:14px;">
+      <a href="/privacy.html" class="muted">Privacy Policy</a>
+      <a href="/terms.html" class="muted">Terms</a>
+      
+    </nav>
+  </div>
+</footer>
 <script>
+  document.getElementById('y').textContent = new Date().getFullYear();
   const fmt = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
-
   function computeFV({ P, r, n, t, C, startNow }) {
-    const i = r / n;
-    const periods = Math.round(n * t);
-    let fvPrincipal = P * Math.pow(1 + i, periods);
-
-    const perPeriodContrib = C * 12 / n;
-    const shift = startNow ? 0 : 1;
-    let fvContrib = 0;
-
-    if (perPeriodContrib > 0 && i > 0) {
-      const effectivePeriods = periods - Math.round(n/12)*shift;
-      const growth = Math.pow(1 + i, effectivePeriods);
-      fvContrib = perPeriodContrib * (growth - 1) / i;
-      fvContrib *= Math.pow(1 + i, Math.round(n/12)*shift);
-    } else if (perPeriodContrib > 0 && i === 0) {
-      fvContrib = perPeriodContrib * (periods - Math.round(n/12)*shift);
-    }
-
-    const fv = fvPrincipal + fvContrib;
-    const totalContrib = P + C * 12 * t;
-    const interest = fv - totalContrib;
-
-    return { fv, interest, totalContrib, periods };
+    const i = r / n, periods = Math.round(n * t); let fvPrincipal = P * Math.pow(1 + i, periods);
+    const perPeriodContrib = C * 12 / n; const shift = startNow ? 0 : 1; let fvContrib = 0;
+    if (perPeriodContrib > 0 && i > 0) { const effectivePeriods = periods - Math.round(n/12)*shift; const growth = Math.pow(1 + i, effectivePeriods); fvContrib = perPeriodContrib * (growth - 1) / i; fvContrib *= Math.pow(1 + i, Math.round(n/12)*shift); }
+    else if (perPeriodContrib > 0 && i === 0) { fvContrib = perPeriodContrib * (periods - Math.round(n/12)*shift); }
+    const fv = fvPrincipal + fvContrib; const totalContrib = P + C * 12 * t; const interest = fv - totalContrib; return { fv, interest, totalContrib, periods };
   }
-
   function scheduleByYear(params) {
-    const rows = [];
-    let balance = params.P;
-    const months = Math.round(12 * params.t);
-    const rateMonthly = params.r / 12;
-    const startOffset = params.startNow ? 0 : 1;
-
-    for (let m = 1; m <= months; m++) {
-      balance *= (1 + rateMonthly);
-      if (!(m <= startOffset)) balance += params.C;
-      if (m % 12 === 0) {
-        const year = m / 12;
-        const contributed = params.P + params.C * (m - startOffset < 0 ? 0 : m - startOffset);
-        const interest = balance - contributed;
-        rows.push({ year, balance, contributed, interest });
-      }
-    }
+    const rows = []; let balance = params.P; const months = Math.round(12 * params.t); const rateMonthly = params.r / 12; const startOffset = params.startNow ? 0 : 1;
+    for (let m = 1; m <= months; m++) { balance *= (1 + rateMonthly); if (!(m <= startOffset)) balance += params.C; if (m % 12 === 0) { const year = m / 12; const contributed = params.P + params.C * (m - startOffset < 0 ? 0 : m - startOffset); const interest = balance - contributed; rows.push({ year, balance, contributed, interest }); } }
     return rows;
   }
-
   function $(id){ return document.getElementById(id); }
-
   $('compute').addEventListener('click', () => {
     const P = Math.max(0, parseFloat($('principal').value || 0));
     const r = Math.max(0, parseFloat($('rate').value || 0)) / 100;
@@ -197,31 +173,18 @@
     const n = parseInt($('freq').value, 10);
     const C = Math.max(0, parseFloat($('contrib').value || 0));
     const startNow = $('start').value === '0';
-
     if (!isFinite(P) || !isFinite(r) || !isFinite(t)) return;
-
     const res = computeFV({ P, r, n, t, C, startNow });
-
     $('summary').hidden = false;
     $('out-balance').textContent  = fmt.format(res.fv);
     $('out-contrib').textContent  = fmt.format(P + C * 12 * t);
     $('out-interest').textContent = fmt.format(res.interest);
-
     const rows = scheduleByYear({ P, r, t, C, startNow });
-    const tbody = $('schedule').querySelector('tbody');
-    tbody.innerHTML = '';
-    rows.forEach(rw => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${rw.year}</td><td>${fmt.format(rw.balance)}</td><td>${fmt.format(rw.contributed)}</td><td>${fmt.format(rw.interest)}</td>`;
-      tbody.appendChild(tr);
-    });
+    const tbody = $('schedule').querySelector('tbody'); tbody.innerHTML = '';
+    rows.forEach(rw => { const tr = document.createElement('tr'); tr.innerHTML = `<td>${rw.year}</td><td>${fmt.format(rw.balance)}</td><td>${fmt.format(rw.contributed)}</td><td>${fmt.format(rw.interest)}</td>`; tbody.appendChild(tr); });
     $('table-wrap').hidden = rows.length === 0;
   });
-
-  $('reset').addEventListener('click', () => {
-    $('summary').hidden = true;
-    $('table-wrap').hidden = true;
-  });
+  $('reset').addEventListener('click', () => { $('summary').hidden = true; $('table-wrap').hidden = true; });
 </script>
 </body>
 </html>
