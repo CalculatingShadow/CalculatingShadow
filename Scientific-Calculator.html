@@ -5,12 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Scientific Calculator – Degrees/Radians, Trig, Logs, Powers</title>
 <meta name="description" content="Free scientific calculator with degrees/radians, trigonometry, logarithms, powers, factorial, memory keys, and keyboard support. Includes how-to, examples, formulas, and FAQs.">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7533964735503056" crossorigin="anonymous"></script>
 <style>
-  :root{
-    --bg:#0b0d12; --panel:#12151c; --text:#e9eef6; --muted:#8e96a3; --border:#1f2430;
-    --soft:rgba(127,151,255,.12); --accent:#2a6cff; --wrap:1180px;
-    --font:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
-  }
+  :root{--bg:#0b0d12; --panel:#12151c; --text:#e9eef6; --muted:#8e96a3; --border:#1f2430; --soft:rgba(127,151,255,.12); --accent:#2a6cff; --wrap:1180px; --font:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial}
   *{box-sizing:border-box}
   body{margin:0; font-family:var(--font); color:var(--text); background:radial-gradient(1000px 600px at 10% -10%, var(--soft), transparent), radial-gradient(800px 500px at 100% 110%, var(--soft), transparent), var(--bg)}
   a{color:inherit; text-decoration:none}
@@ -33,6 +30,9 @@
   .key:hover{ background:#34393e } .key:active{ transform:translateY(1px) }
   .key.wide{ grid-column:span 2 } .key.equal{ background:#1296db; color:#fff }
   .content{ margin-top:16px } .content .card + .card{ margin-top:12px } ol, ul{ margin:0 0 8px 18px }
+  footer{border-top:1px solid var(--border); margin-top:40px}
+  .foot{max-width:var(--wrap); margin:0 auto; padding:16px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between}
+  .foot a{color:var(--muted)}
 </style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
@@ -126,45 +126,31 @@
   </main>
 </div>
 
+<footer>
+  <div class="foot">
+    <small class="muted">© <span id="y"></span> Calculator.ink — Educational use only.</small>
+    <nav style="display:flex; gap:14px;">
+      <a href="/privacy.html" class="muted">Privacy Policy</a>
+      <a href="/terms.html" class="muted">Terms</a>
+      
+    </nav>
+  </div>
+</footer>
 <script>
 (() => {
+  document.getElementById('y').textContent = new Date().getFullYear();
   const screen = document.getElementById('screen');
   const degBtn = document.getElementById('degBtn');
   const radBtn = document.getElementById('radBtn');
-  let angleMode = 'DEG';
-  let memory = 0;
-
-  const setScreen = v => screen.value = v;
-  const getScreen = () => screen.value;
-  const insert = s => {
-    const v = getScreen();
-    if (v === '0' && /^[0-9(πℯ]|sin|cos|tan|a|l|s|c|t/.test(s)) setScreen(s);
-    else setScreen(v + s);
-    screen.focus();
-  };
-
-  function fact(n){
-    n = Number(n);
-    if (n < 0 || !Number.isFinite(n) || Math.floor(n) !== n) return NaN;
-    let r=1; for(let i=2;i<=n;i++) r*=i; return r;
-  }
-  function preprocessPercent(expr){
-    return expr.replace(/(\d+(\.\d+)?)%/g, '($1/100)');
-  }
+  let angleMode = 'DEG'; let memory = 0;
+  const setScreen = v => screen.value = v; const getScreen = () => screen.value;
+  const insert = s => { const v = getScreen(); if (v === '0' && /^[0-9(πℯ]|sin|cos|tan|a|l|s|c|t/.test(s)) setScreen(s); else setScreen(v + s); screen.focus(); };
+  function fact(n){ n = Number(n); if (n < 0 || !Number.isFinite(n) || Math.floor(n) !== n) return NaN; let r=1; for(let i=2;i<=n;i++) r*=i; return r; }
+  function preprocessPercent(expr){ return expr.replace(/(\d+(\.\d+)?)%/g, '($1/100)'); }
   function evaluateExpression(expr){
     let s = expr;
-    s = s.replace(/π/g, 'Math.PI');
-    s = s.replace(/ℯ/g, 'Math.E');
-    s = s.replace(/\^/g, '**');
-    s = s.replace(/√/g, 'Math.sqrt');
-    s = s.replace(/10\^/g, '10**');
-    s = preprocessPercent(s);
-    s = s.replace(/(\d|\))\s*\(/g, '$1*(');
-    s = s.replace(/\bln\(/g, 'Math.log(');
-    s = s.replace(/\blog10\(/g, 'Math.log10(');
-    s = s.replace(/\bexp\(/g, 'Math.exp(');
-    s = s.replace(/\babs\(/g, 'Math.abs(');
-
+    s = s.replace(/π/g, 'Math.PI').replace(/ℯ/g, 'Math.E').replace(/\^/g, '**').replace(/√/g, 'Math.sqrt').replace(/10\^/g, '10**');
+    s = preprocessPercent(s).replace(/(\d|\))\s*\(/g, '$1*(').replace(/\bln\(/g, 'Math.log(').replace(/\blog10\(/g, 'Math.log10(').replace(/\bexp\(/g, 'Math.exp(').replace(/\babs\(/g, 'Math.abs(');
     const toRad = angleMode==='DEG';
     const wrapTrig = {
       sin: x => toRad ? `Math.sin((${x})*Math.PI/180)` : `Math.sin(${x})`,
@@ -176,59 +162,31 @@
     };
     for (const name of ['sin','cos','tan','asin','acos','atan']){
       const re = new RegExp(`\\b${name}\\(([^()]|\\([^()]*\\))*\\)`, 'g');
-      s = s.replace(re, m => {
-        const inside = m.slice(name.length+1, -1);
-        return wrapTrig[name](inside);
-      });
+      s = s.replace(re, m => { const inside = m.slice(name.length+1, -1); return wrapTrig[name](inside); });
     }
-
-    s = s.replace(/(\d+(\.\d+)?|\))!/g, (m)=>{
-      return m.endsWith(')!') ? `fact${m.slice(0,-1)}` : `fact(${m.slice(0,-1)})`;
-    });
-
-    try{
-      const fnEval = new Function('Math','fact',`"use strict"; return (${s});`);
-      return fnEval(Math, fact);
-    }catch(e){ return NaN; }
+    s = s.replace(/(\d+(\.\d+)?|\))!/g, (m)=> m.endsWith(')!') ? `fact${m.slice(0,-1)}` : `fact(${m.slice(0,-1)})`);
+    try{ const fnEval = new Function('Math','fact',`"use strict"; return (${s});`); return fnEval(Math, fact); }catch(e){ return NaN; }
   }
-
   document.querySelectorAll('.key').forEach(btn=>{
-    const ins = btn.getAttribute('data-ins');
-    const act = btn.getAttribute('data-act');
-    if (ins){
-      btn.addEventListener('click', ()=>{
-        if (ins === 'x2'){
-          const v = getScreen(); if (v === '0') return;
-          setScreen(v + '^2');
-        } else {
-          insert(ins);
-        }
-      });
-    } else if (act){
-      btn.addEventListener('click', ()=>{
-        const v = getScreen();
-        switch(act){
-          case 'C': setScreen('0'); break;
-          case 'CE': case 'back': setScreen(v.length>1 ? v.slice(0,-1) : '0'); break;
-          case 'sign': setScreen(/^[-]/.test(v) ? v.slice(1) : (v==='0'?'0':'-'+v)); break;
-          case 'eval': {
-            const res = evaluateExpression(v);
-            setScreen( (res===undefined || !isFinite(res)) ? 'Error' : String(res) );
-            break;
-          }
-          case 'MC': memory = 0; break;
-          case 'MR': insert(String(memory)); break;
-          case 'Mplus': { const r=evaluateExpression(v); if (isFinite(r)) memory += r; break; }
-          case 'Mminus':{ const r=evaluateExpression(v); if (isFinite(r)) memory -= r; break; }
-          case 'MS': { const r=evaluateExpression(v); if (isFinite(r)) memory = r; break; }
-        }
-      });
-    }
+    const ins = btn.getAttribute('data-ins'), act = btn.getAttribute('data-act');
+    if (ins){ btn.addEventListener('click', ()=>{ if (ins === 'x2'){ const v = getScreen(); if (v === '0') return; setScreen(v + '^2'); } else insert(ins); }); }
+    else if (act){ btn.addEventListener('click', ()=>{
+      const v = getScreen();
+      switch(act){
+        case 'C': setScreen('0'); break;
+        case 'CE': case 'back': setScreen(v.length>1 ? v.slice(0,-1) : '0'); break;
+        case 'sign': setScreen(/^[-]/.test(v) ? v.slice(1) : (v==='0'?'0':'-'+v)); break;
+        case 'eval': { const res = evaluateExpression(v); setScreen( (res===undefined || !isFinite(res)) ? 'Error' : String(res) ); break; }
+        case 'MC': memory = 0; break;
+        case 'MR': insert(String(memory)); break;
+        case 'Mplus': { const r=evaluateExpression(v); if (isFinite(r)) memory += r; break; }
+        case 'Mminus':{ const r=evaluateExpression(v); if (isFinite(r)) memory -= r; break; }
+        case 'MS': { const r=evaluateExpression(v); if (isFinite(r)) memory = r; break; }
+      }
+    });}
   });
-
-  degBtn.addEventListener('click', ()=>{ angleMode='DEG'; degBtn.classList.add('active'); radBtn.classList.remove('active'); });
-  radBtn.addEventListener('click', ()=>{ angleMode='RAD'; radBtn.classList.add('active'); degBtn.classList.remove('active'); });
-
+  document.getElementById('degBtn').addEventListener('click', ()=>{ angleMode='DEG'; degBtn.classList.add('active'); radBtn.classList.remove('active'); });
+  document.getElementById('radBtn').addEventListener('click', ()=>{ angleMode='RAD'; radBtn.classList.add('active'); degBtn.classList.remove('active'); });
   document.addEventListener('keydown', (e)=>{
     if (e.ctrlKey || e.metaKey) return;
     const k = e.key;
@@ -237,7 +195,6 @@
     if (k === 'Backspace'){ document.querySelector('[data-act="back"]').click(); e.preventDefault(); return; }
     if (k === 'Escape'){ document.querySelector('[data-act="C"]').click(); e.preventDefault(); return; }
   });
-
   setScreen('0');
 })();
 </script>
