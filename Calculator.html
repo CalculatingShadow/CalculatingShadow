@@ -5,21 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Standard Calculator – Fast & Keyboard-Friendly</title>
 <meta name="description" content="Standard calculator with a clean dark theme. Keyboard support, quick operations, and helpful usage examples and FAQs.">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7533964735503056" crossorigin="anonymous"></script>
 <style>
-  :root{
-    --bg:#0b0d12; --panel:#12151c; --text:#e9eef6; --muted:#8e96a3; --border:#1f2430;
-    --soft:rgba(127,151,255,.12); --accent:#2a6cff; --wrap:1100px;
-    --font:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
-  }
+  :root{--bg:#0b0d12; --panel:#12151c; --text:#e9eef6; --muted:#8e96a3; --border:#1f2430; --soft:rgba(127,151,255,.12); --accent:#2a6cff; --wrap:1100px; --font:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial}
   *{box-sizing:border-box}
-  body{
-    margin:0; font-family:var(--font); color:var(--text);
-    background:
-      radial-gradient(1000px 600px at 10% -10%, var(--soft), transparent),
-      radial-gradient(800px 500px at 100% 110%, var(--soft), transparent),
-      var(--bg);
-    min-height:100vh;
-  }
+  body{margin:0; font-family:var(--font); color:var(--text); background:radial-gradient(1000px 600px at 10% -10%, var(--soft), transparent), radial-gradient(800px 500px at 100% 110%, var(--soft), transparent), var(--bg); min-height:100vh}
   a{color:inherit; text-decoration:none}
   .wrap{max-width:var(--wrap); margin:0 auto; padding:18px 16px}
   .pills{display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin:8px 0 18px}
@@ -36,6 +26,9 @@
   .key.equal{ background:#1296db; border-color:#0f86c4; color:#fff } .key.equal:hover{ background:#0f86c4 }
   .info{ max-width:840px; margin:0 auto 40px } .info .section{ background:var(--panel); border:1px solid var(--border); border-radius:18px; padding:18px; margin-top:14px }
   .info h2{ margin:0 0 8px } ol,ul{ margin:0 0 10px 18px }
+  footer{border-top:1px solid var(--border); margin-top:40px}
+  .foot{max-width:var(--wrap); margin:0 auto; padding:16px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between}
+  .foot a{color:var(--muted)}
 </style>
 </head>
 <body>
@@ -117,11 +110,21 @@
   </section>
 </div>
 
+<footer>
+  <div class="foot">
+    <small class="muted">© <span id="y"></span> Calculator.ink — Educational use only.</small>
+    <nav style="display:flex; gap:14px;">
+      <a href="/privacy.html" class="muted">Privacy Policy</a>
+      <a href="/terms.html" class="muted">Terms</a>
+      
+    </nav>
+  </div>
+</footer>
 <script>
+  document.getElementById('y').textContent = new Date().getFullYear();
   const display=document.getElementById('display');
   let expr='0', replaceNext=false;
   const update=()=>display.value=expr;
-
   const insertNum=n=>{ if(replaceNext||expr==='0'){expr=n;replaceNext=false}else expr+=n; update(); };
   const insertDot=()=>{ const parts=expr.split(/([+\-*/%])/); let last=parts[parts.length-1]; if(!last.includes('.')){expr+='.'; update();} };
   const insertOp=op=>{ const last=expr.slice(-1); if('+-*/%'.includes(last)) expr=expr.slice(0,-1)+op; else expr+=op; replaceNext=false; update(); };
@@ -133,7 +136,6 @@
     parts.push(op,String(out)); expr=parts.join(''); replaceNext=true; update();
   };
   const eq=()=>{ try{ const val=Function('"use strict";return ('+expr+')')(); expr=String(val); }catch{ expr='Error'; } replaceNext=true; update(); };
-
   document.querySelectorAll('.key').forEach(b=>{
     b.addEventListener('click',()=>{
       if(b.dataset.num) return insertNum(b.dataset.num);
@@ -147,7 +149,6 @@
       if(b.dataset.act==='eq')   return eq();
     });
   });
-
   document.addEventListener('keydown',e=>{
     if(e.ctrlKey||e.metaKey) return;
     const k=e.key;
@@ -158,9 +159,7 @@
     else if(k==='Backspace') back();
     else if(k==='Escape') c();
   });
-
   update();
 </script>
 </body>
 </html>
-
